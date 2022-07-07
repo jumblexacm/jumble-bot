@@ -14,22 +14,24 @@ https://discord.com/developers/docs/intro
 2. Create the [app](https://discord.com/developers/docs/intro#bots-and-apps)
     - Visit https://discord.com/developers/applications
     - Click **[New application]**
-    - Choose the team you created (not your personal team)
+    - Choose your team from earlier (not your personal team)
 
-3. Choose permissions
-    - **"OAuth2"** > **"General"** > **"Default Authorization Link"**
-    - Under **"Authorization Method"**, choose `In-app Authorization`
-    - Under **"Scopes"**, check `bot`
-    - Under **"Bot Permissions"**, check `Read Messages/View Channels`
-    - TODO Add any other permissions and their purposes as development progresses
+3. Add the redirect URI
+    - Input your app's about page or another URL for the user to see after installing your app
 
-<!---
-3. Create the invite link
-    - TODO What's the difference between the default authorization link
-    - **"OAuth2"** > **"URL Generator"**
+3. Create the bot  
+(As far as [@kirmar](https://github.com/kirmar) can tell, the app must have a bot user to join a server / read any messages.)
+    - Menu section: **"Bot"**
+    - Click **[Add Bot]**
+    - Under **"Privileged Gateway Intents"**, check `Message Content Intent`
+
+4. Generate the invite URL
+    - Menu section: **"OAuth2"** > **"URL Generator"**
     - Choose [permissions](https://discord.com/developers/docs/topics/oauth2#oauth2):
-        - messages.read
--->
+        - Under **"Scopes"**, check `bot`
+        - Under **"Bot Permissions"**, check `Read Messages/View Channels`
+    - As your redirect URL, choose your redirect URI from earlier
+    - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server.
 
 
 ## Repo conventions
