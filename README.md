@@ -1,9 +1,7 @@
 # ACM x Jumble
 
-https://discord.com/developers/docs/resources/channel#get-channel-messages
 
-
-## Create the Discord bot
+## STEP 1: Create the Discord bot
 
 https://discord.com/developers/docs/intro
 
@@ -31,7 +29,29 @@ https://discord.com/developers/docs/intro
         - Under **"Scopes"**, check `bot`
         - Under **"Bot Permissions"**, check `Read Messages/View Channels`
     - As your redirect URL, choose your redirect URI from earlier
-    - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server.
+    - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server, for now your dev server.
+
+
+## STEP 2: Create a test student org server
+
+1. In Discord, click **[Add a Server]** and follow the steps
+
+2. Under **"Server Settings"** > **"Enable Community"**, click **[Get Started]** and follow the steps
+
+3. Click the plus symbol to **"Create Channel"**, check `Announcement`, and create the channel
+
+4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot.
+
+Notes about community servers:
+- For a message to appear in the dev server, the person posting in the student org server must send the message *and* click "Publish."
+- When someone edits the message in the student org server, it also updates in the dev server.
+
+
+## Resources
+
+https://discord.com/developers/docs/resources/channel#get-channel-messages
+
+https://github.com/kkrypt0nn/Python-Discord-Bot-Template
 
 
 ## Repo conventions
