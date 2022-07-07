@@ -35,5 +35,5 @@ https://discord.com/developers/docs/intro
 ## Repo conventions
 
 Branch naming convention
-- `bot/STA-#/description`
+- `<team>/<trello-task>/<description>`
 - Example: `bot/STA-7/get-announcement-data`
