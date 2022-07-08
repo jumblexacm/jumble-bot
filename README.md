@@ -203,7 +203,8 @@ https://betterprogramming.pub/build-a-discord-bot-with-aws-lambda-api-gateway-cc
           cd task/
           zip -r ../lambda_bot.zip *
     
-    - Upload the .zip file to the Lambda function
+    - In `jumble-bot-function`'s **"Code"** tab, **[Upload from]** the .zip file
+    - Click **[Deploy]**
 
 3. Upload your Discord app's public key to AWS
     - Find the public key
