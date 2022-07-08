@@ -185,7 +185,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
         - Auth type: `NONE` (We'll authenticate within the Lambda function)
 
 2. Get the function URL
-    - Under **"Configuration"**, copy the function URL
+    - In `jumble-bot-function`'s function overview, copy the function URL
 
 
 ## Resources
