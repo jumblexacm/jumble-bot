@@ -56,7 +56,7 @@ Notes about community servers:
 - When someone edits the message in the student org server, it also updates in the dev server.
 
 
-## STEP 3: Create the admin IAM role and user
+## STEP 3: Create the admin IAM role and first user
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 
@@ -132,16 +132,12 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Attach permissions policies: `jumble-bot-function-policy`
     - User group name: `jumble-engineer-group`
 
-3. Add your IAM user to the user group
-    - In the IAM console, click **"Users"** and choose your IAM user
+3. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user, the same way as earlier
+
+4. Add each user to the user group
+    - In the IAM console, click **"Users"** and choose an IAM user
     - Click **"Groups"**
     - Add user to groups: `jumble-engineer-group`
-
-4. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user
-    - Use the same naming convention and access type from your IAM user
-    - However, this time:
-        - Add user to group: `jumble-engineer-group`
-        - (Do NOT attach any policies directly, except for the policy that IAM automatically attaches for password changes)
 
 5. Set up MFA for each user
     - In the IAM console, click **"Users"** and choose an IAM user
