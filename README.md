@@ -187,3 +187,11 @@ https://github.com/kkrypt0nn/Python-Discord-Bot-Template
 Branch naming convention
 - `<team>/<trello-task>/<description>`
 - Example: `bot/STA-7/get-announcement-data`
+
+Pull request (PR) conventions
+- At the top of the description, include the Trello ticket:
+
+      [STA-10](link)
+      This ticket entails...
+
+- PRs aren't needed for README updates. (Commit directly to `main`)
