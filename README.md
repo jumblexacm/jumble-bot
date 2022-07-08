@@ -106,7 +106,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Sign in as your IAM user
     - Visit the "switch roles" link
 
-5. From now on, use the admin role any time you need full permissions, instead of using the root user directly
+6. From now on, use the admin role any time you need full permissions, instead of using the root user directly
 
 
 ## STEP 4: Finish creating the IAM users
@@ -129,27 +129,31 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 2. Create an IAM user group
     - In the Identity and Access Management (IAM) console, click **"User groups"**
     - Click **[Create group]**
-    - Attach permissions policies: `jumble-bot-function-policy`
+    - Attach permissions policies
+        - `jumble-admin-policy`
+        - `jumble-bot-function-policy`
     - User group name: `jumble-engineer-group`
+    - Add users to the group: *[Select your first IAM user from earlier]*
 
-3. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user, the same way as earlier
+3. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user
+    - Use the same naming convention and access type from your IAM user
+    - However, this time:
+        - Add user to group: `jumble-engineer-group`
+        - (Do NOT attach any policies directly, except for the policy that IAM automatically attaches for password changes)
 
-4. Add each user to the user group
-    - In the IAM console, click **"Users"** and choose an IAM user
-    - Click **"Groups"**
-    - Add user to groups: `jumble-engineer-group`
-
-5. Set up MFA for each user
+4. Have each user set up MFA by following these steps:
+    - Sign in as the IAM user
+    - Visit the "switch roles" link for the admin role
     - In the IAM console, click **"Users"** and choose an IAM user
     - Click **"Security credentials"**
     - Assigned MFA device: `Manage`
     - Work with the user to set up their MFA of choice
 
-6. Optional: To make the sign-in URL simpler for IAM users and something that isn't a secret, create an [account alias](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#CreateAccountAlias)
+5. Optional: To make the sign-in URL simpler for IAM users and something that isn't a secret, create an [account alias](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#CreateAccountAlias)
     - In the IAM console, click **"Dashboard"**
     - Under **"AWS Account"** > **"Account Alias"**, click **[Create]** and choose a unique alias with no private information
 
-7. Send each user's credentials securely to the user
+6. Send each user's credentials securely to the user
 
 
 ## STEP 5: Set up the AWS Lambda function
