@@ -72,7 +72,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Add permissions: `AdministratorAccess`
     - Name: `jumble-admin-role`
 
-3. Create an IAM [permissions policy](https://docs.aws.amazon.com/lambda/latest/dg/security_iam_id-based-policy-examples.html)
+3. Create an IAM "assume admin role" [permissions policy](https://docs.aws.amazon.com/lambda/latest/dg/security_iam_id-based-policy-examples.html)
     - In the IAM console, click **"Policies"**
     - Click **[Create policy]**
     - Add Lambda function view/edit permissions
@@ -127,22 +127,28 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
         - Request conditions: `MFA required`
     - Name: `jumble-bot-function-policy`
 
-2. Create an IAM user group
-    - In the Identity and Access Management (IAM) console, click **"User groups"**
-    - Click **[Create group]**
-    - Attach permissions policies
-        - `jumble-admin-policy`
-        - `jumble-bot-function-policy`
-    - User group name: `jumble-engineer-group`
-    - Add users to the group: *[Select your first IAM user from earlier]*
+2. Create an IAM engineer role
+    - In the Identity and Access Management (IAM) console, click **"Roles"**
+    - Click **[Create role]**
+    - Trusted entity type: `AWS account`
+    - An AWS account: `This account`
+    - Options: `Require MFA`
+    - Add permissions: `jumble-bot-function-policy`
+    - Name: `jumble-engineer-role`
 
-3. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user
-    - Use the same naming convention and access type from your IAM user
-    - However, this time:
-        - Add user to group: `jumble-engineer-group`
-        - (Do NOT attach any policies directly, except for the policy that IAM automatically attaches for password changes)
+3. Create an IAM "assume engineer role" policy
+    - Use most of the same steps from `jumble-admin-policy`
+    - However, paste the ARN from the `jumble-engineer-role` summary (not the admin role's summary)
 
-4. Have each user set up MFA by following these steps:
+4. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user
+    - Use the same steps from earlier
+
+5. For each user (including the first IAM user from earlier), add the `jumble-engineer-policy`
+    - In the IAM console, click **"Users"** and choose the IAM user
+    - Click **"Add permissions"**
+    - Attach existing policies directly: `jumble-admin-policy`
+
+5. Have each user set up MFA by following these steps:
     - Sign in as the IAM user
     - Visit the "switch roles" link for the admin role
     - In the IAM console, click **"Users"** and choose an IAM user
@@ -150,11 +156,11 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Assigned MFA device: `Manage`
     - Work with the user to set up their MFA of choice
 
-5. Optional: To make the sign-in URL simpler for IAM users and something that isn't a secret, create an [account alias](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#CreateAccountAlias)
+6. Optional: To make the sign-in URL simpler for IAM users and something that isn't a secret, create an [account alias](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#CreateAccountAlias)
     - In the IAM console, click **"Dashboard"**
     - Under **"AWS Account"** > **"Account Alias"**, click **[Create]** and choose a unique alias with no private information
 
-6. Send each user's credentials securely to the user
+7. Send each user's credentials securely to the user
 
 
 ## STEP 5: Set up the AWS Lambda function
