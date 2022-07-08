@@ -69,7 +69,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
         - Service: `Lambda`
         - Actions:
             - `Read` > `GetAccountSettings` (to view the list of all functions in the Lambda console)
-            - `Read` > `ListFunctions`
+            - `List` > `ListFunctions`
         - Resources: `All resources`
         - Request conditions: `MFA required`
     - Name: `jumble-bot-function-policy`
@@ -162,8 +162,8 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Click **[Edit policy]**
     - `Lambda` actions:
         - `Read` > `GetFunction` (to view a Lambda function's code, logs, and settings)
-        - `List` > `ListFunctionUrlConfigs` (to view a function URLs)
-        - `List` > `CreateFunctionUrlConfig` (to create a function URL)
+        - `List` > `ListFunctionUrlConfigs` (to view a function URL)
+        - `Write` > `CreateFunctionUrlConfig` (to create a function URL)
     - For each action:
         - Resources: `Specific`
             - function ("Specify **function** resource ARN for the **GetFunction** action."): **[Add ARN]**
