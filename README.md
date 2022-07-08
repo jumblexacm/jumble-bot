@@ -65,11 +65,14 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 2. Create an IAM [permissions policy](https://docs.aws.amazon.com/lambda/latest/dg/security_iam_id-based-policy-examples.html)
     - In the Identity and Access Management (IAM) console, click **"Policies"**
     - Click **[Create policy]**
-    - Add Lambda function edit permission
+    - Add Lambda function view/edit permissions
         - Service: `Lambda`
         - Actions:
             - `Read` > `GetAccountSettings` (to view the list of all functions in the Lambda console)
             - `List` > `ListFunctions`
+            - `Read` > `GetFunction` (to view a Lambda function's code, logs, and settings)
+            - `List` > `ListFunctionUrlConfigs` (to view a function URL)
+            - `Write` > `CreateFunctionUrlConfig` (to create a function URL)
         - Resources: `All resources`
         - Request conditions: `MFA required`
     - Name: `jumble-bot-function-policy`
@@ -155,22 +158,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 
 5. As the root user, remove `jumble-lambda-create-policy` for the IAM user
 
-6. As the root user, let the engineers view the new function
-    - In the IAM console, click **"Policies"**
-    - Click **[Create policy]**
-    - Open `jumble-bot-function-policy`
-    - Click **[Edit policy]**
-    - `Lambda` actions:
-        - `Read` > `GetFunction` (to view a Lambda function's code, logs, and settings)
-        - `List` > `ListFunctionUrlConfigs` (to view a function URL)
-        - `Write` > `CreateFunctionUrlConfig` (to create a function URL)
-    - For each action:
-        - Resources: `Specific`
-            - function ("Specify **function** resource ARN for the **GetFunction** action."): **[Add ARN]**
-            - Input the function ARN of `jumble-bot-function` (copied from the Lambda function's overview page)
-        - Request conditions: `MFA required`
-
-7. Create the function URL
+6. Create the function URL
     - In the Lambda console, click **[Functions]**
     - Open `jumble-bot-function`
     - Under **"Configuration"**, click **[Create function URL]**
