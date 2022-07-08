@@ -1,6 +1,13 @@
 # ACM x Jumble
 
 
+## Prerequisites
+
+- Discord account
+
+- Discord server (your "dev server")
+
+
 ## STEP 1: Create the Discord bot
 
 https://discord.com/developers/docs/intro
@@ -40,7 +47,7 @@ https://discord.com/developers/docs/intro
 
 3. Click the plus symbol to **"Create Channel"**, check `Announcement`, and create the channel
 
-4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot.
+4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot
 
 Notes about community servers:
 - For a message to appear in the dev server, the person posting in the student org server must send the message *and* click "Publish."
