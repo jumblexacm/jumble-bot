@@ -15,6 +15,7 @@ https://discord.com/developers/docs/intro
 1. Create the [team](https://discord.com/developers/docs/topics/teams)
     - Visit https://discord.com/developers/teams
     - Click **[New Team]**
+    - To add the other engineers, open the new team and **"Invite team members"**
 
 2. Create the [app](https://discord.com/developers/docs/intro#bots-and-apps)
     - Visit https://discord.com/developers/applications
