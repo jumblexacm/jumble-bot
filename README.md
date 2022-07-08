@@ -131,6 +131,8 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
             - `Write`
                 - `CreateFunction` (to create a function)
                 - `CreateFunctionUrlConfig` (to create a function URL)
+                - `UpdateFunctionCode` (to update a function's code, lol)
+                - `UpdateFunctionConfiguration` (to update function settings like the runtime/language)
             - `Permissions management`
                 - `AddPermission` (to create a function URL)
         - Resources: `All resources`
@@ -144,6 +146,15 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
             - `Permissions management`
                 - `AttachRolePolicy` (to create a function)
                 - `CreatePolicy` (to create a function)
+        - Resources: `All resources`
+        - Request conditions: `MFA required`
+    - Add additional permissions
+        - Service: `CloudWatch Logs`
+        - Actions:
+            - `List`
+                - `DescribeLogGroups` (to view the list of Lambda "console" logs)
+            - `Read`
+                - `FilterLogEvents` (to view the list of Lambda "console" logs)
         - Resources: `All resources`
         - Request conditions: `MFA required`
     - Name: `jumble-lambda-policy`
@@ -174,6 +185,8 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 
 ## STEP 6: Set up the Lambda function
 
+https://betterprogramming.pub/build-a-discord-bot-with-aws-lambda-api-gateway-cc1cff750292
+
 1. Assuming the `engineer` role, create the function
     - In the Lambda console, click **"Dashboard"** and **[Create function]**
     - Check `Author from scratch`
@@ -184,8 +197,28 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
         - Under **"Advanced settings"**, check `Enable function URL`
         - Auth type: `NONE` (We'll authenticate within the Lambda function)
 
-2. Get the function URL
-    - Under **"Configuration"**, copy the function URL
+2. Upload your code
+    - In your local terminal, run:
+
+          cd task/
+          zip -r ../lambda_bot.zip *
+    
+    - Upload the .zip file to the Lambda function
+
+3. Upload your Discord app's public key to AWS
+    - Find the public key
+        - Visit https://discord.com/developers/applications
+        - Choose your app
+        - Find the public key
+    - Upload the public key
+        - In `jumble-bot-function`'s **"Configuration"** tab, click **"Environment variables"**
+        - Click **[Edit]** and **[Add environment variable]**
+        - Key: `PUBLIC_KEY`
+        - Value: *[Input your Discord app's public key]*
+
+4. Add your Lambda function URL to Discord
+    - In `jumble-bot-function`'s **"Configuration"** tab, copy the function URL
+    - In the Discord app's **"Interactions Endpoint URL"**, paste the function URL
 
 
 ## Resources
