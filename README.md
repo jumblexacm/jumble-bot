@@ -64,8 +64,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 1. Sign in as the root user in your AWS account
 
 2. Create an IAM [admin role](https://alestic.com/2014/09/aws-root-password/)
-    - In the Identity and Access Management (IAM) console, click **"Roles"**
-    - Click **[Create role]**
+    - In the Identity and Access Management (IAM) console, click **"Roles"** and **[Create role]**
     - Trusted entity type: `AWS account`
     - An AWS account: `This account`
     - Options: `Require MFA`
@@ -73,8 +72,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Name: `admin`
 
 3. Create an IAM "assume admin role" [permissions policy](https://docs.aws.amazon.com/lambda/latest/dg/security_iam_id-based-policy-examples.html)
-    - In the IAM console, click **"Policies"**
-    - Click **[Create policy]**
+    - In the IAM console, click **"Policies"** and **[Create policy]**
     - Add Lambda function view/edit permissions
         - Service: `STS`
         - Actions:
@@ -86,8 +84,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Name: `jumble-assume-admin-policy`
 
 4. Create your IAM [user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html#id_which-to-choose)
-    - In the IAM console, click **"Users"**
-    - Click **[Add users]**
+    - In the IAM console, click **"Users"** and **[Add users]**
     - User name: *[Input your name]*
         - Example: `kira`
     <!--- - Select AWS credential type: `Access key - Programmatic access` -->
@@ -98,7 +95,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Attach existing policies directly: `jumble-assume-admin-policy`
     - After creating the user, save the credentials immediately to a safe place, because they disappear forever if you navigate away from the page
 
-5. Switch to the admin role
+5. Assume the admin role
     - Get the link
         - In the IAM console, click **"Roles"**
         - Open `admin`
@@ -110,11 +107,10 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
 6. From now on, use the admin role any time you need full permissions, instead of using the root user directly
 
 
-## STEP 4: Finish creating the IAM users
+## STEP 4: Create the engineer IAM role
 
-1. In your IAM user and the admin role, create an IAM policy
-    - In the IAM console, click **"Policies"**
-    - Click **[Create policy]**
+1. After assuming the admin role, create an IAM policy for managing Lambda
+    - In the IAM console, click **"Policies"** and **[Create policy]**
     - Add Lambda function view/edit permissions
         - Service: `Lambda`
         - Actions:
@@ -136,8 +132,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Name: `jumble-lambda-policy`
 
 2. Create an IAM engineer role
-    - In the Identity and Access Management (IAM) console, click **"Roles"**
-    - Click **[Create role]**
+    - In the IAM console, click **"Roles"** and **[Create role]**
     - Trusted entity type: `AWS account`
     - An AWS account: `This account`
     - Options: `Require MFA`
@@ -148,15 +143,18 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Use most of the same steps from `jumble-assume-admin-policy`
     - However, paste the ARN from the `engineer` role summary (not the admin role's summary)
 
-4. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user
+
+## STEP 5: Finish creating the IAM users
+
+1. For each engineer who needs access to your AWS resources (like your Lambda function), create an IAM user
     - Use the same steps from earlier
 
-5. For each user (including the first IAM user from earlier), add the `jumble-assume-engineer-policy`
+2. For each user (including the first IAM user from earlier), add the `jumble-assume-engineer-policy`
     - In the IAM console, click **"Users"** and choose the IAM user
     - Click **"Add permissions"**
     - Attach existing policies directly: `jumble-assume-admin-policy`
 
-5. Have each user set up MFA by following these steps:
+3. Have each user set up MFA by following these steps:
     - Sign in as the IAM user
     - Visit the "switch roles" link for the admin role
     - In the IAM console, click **"Users"** and choose an IAM user
@@ -164,18 +162,17 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
     - Assigned MFA device: `Manage`
     - Work with the user to set up their MFA of choice
 
-6. Optional: To make the sign-in URL simpler for IAM users and something that isn't a secret, create an [account alias](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#CreateAccountAlias)
+4. Optional: To make the sign-in URL simpler for IAM users and something that isn't a secret, create an [account alias](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#CreateAccountAlias)
     - In the IAM console, click **"Dashboard"**
     - Under **"AWS Account"** > **"Account Alias"**, click **[Create]** and choose a unique alias with no private information
 
-7. Send each user's credentials securely to the user
+5. Send each user's credentials securely to the user
 
 
-## STEP 5: Set up the AWS Lambda function
+## STEP 6: Set up the AWS Lambda function
 
-1. In your IAM user and the admin role, create the function
-    - In the Lambda console, click **"Dashboard"**
-    - Click **[Create function]**
+1. After assuming the admin role, create the function
+    - In the Lambda console, click **"Dashboard"** and **[Create function]**
     - Check `Author from scratch`
     - Function name: `jumble-bot-function`
     - Execution role: `Create a new role with basic Lambda permissions`
@@ -184,8 +181,7 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
         - Auth type: `NONE` (We'll authenticate within the Lambda function)
 
 2. As any user, create the function URL
-    - In the Lambda console, click **[Functions]**
-    - Open `jumble-bot-function`
+    - In the Lambda console, click **[Functions]** and open `jumble-bot-function`
     - Under **"Configuration"**, click **[Create function URL]**
 
 
