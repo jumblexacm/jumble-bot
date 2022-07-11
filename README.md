@@ -199,8 +199,12 @@ https://betterprogramming.pub/build-a-discord-bot-with-aws-lambda-api-gateway-cc
 
 2. Upload your code
     - In your local terminal, run:
-
+    
           cd task/
+          npm i tweetnacl # Install package
+          
+          touch ../lambda_bot.zip # Otherwise the first time, removing will raise an error
+          rm ../lambda_bot.zip # Otherwise, zipping won't replace the file
           zip -r ../lambda_bot.zip *
     
     - In `jumble-bot-function`'s **"Code"** tab, **[Upload from]** the .zip file
