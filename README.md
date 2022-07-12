@@ -40,6 +40,8 @@ https://discord.com/developers/docs/intro
     - Choose [permissions](https://discord.com/developers/docs/topics/oauth2#oauth2):
         - Under **"Scopes"**, check `bot`
         - Under **"Bot Permissions"**, check `Read Messages/View Channels`
+        <!-- - Under **"Scopes"**, check `bot` and `applications.commands`
+        - Under **"Bot Permissions"**, check `Text Permissions` > `Use Slash Commands` -->
     - As your redirect URL, choose your redirect URI from earlier
     - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server, for now your dev server.
 
