@@ -43,6 +43,9 @@ https://discord.com/developers/docs/intro
     - As your redirect URL, choose your redirect URI from earlier
     - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server, for now your dev server.
 
+5. Invite the bot to your dev server
+    - Use the generated URL
+
 
 ## STEP 2: Create a test student org server
 
