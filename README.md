@@ -214,8 +214,9 @@ https://betterprogramming.pub/build-a-discord-bot-with-aws-lambda-api-gateway-cc
     - In your local terminal, run:
     
           cd task/
-          <!-- npm i tweetnacl -->
+          # npm i tweetnacl
           python3.9 -m pip install --target=pynacl/ pynacl
+          # python3.9 -m pip install --target=discord/ -U discord.py
 
 4. Upload your code
     - In your local terminal (still in `task/`), run:

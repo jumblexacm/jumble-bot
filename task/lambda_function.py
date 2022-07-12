@@ -39,23 +39,3 @@ def lambda_handler(request, lambda_context):
             'statusCode': 401,
             'body': json.dumps("invalid request signature")
         }
-
-
-"""
-# Source: https://discordpy.readthedocs.io/en/stable/quickstart.html
-client = discord.Client()
-
-@client.event
-async def on_ready():
-    print("We have logged in as {0.user}".format(client))
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    if message.content.startswith("$hello"):
-        await message.channel.send("Hello!")
-
-def lambda_handler(event):
-    client.run(PUBLIC_KEY)]
-"""
