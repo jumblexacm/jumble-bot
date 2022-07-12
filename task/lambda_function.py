@@ -6,6 +6,7 @@
 import os
 import sys
 import json
+import traceback
 
 sys.path.append('pynacl')
 from nacl.signing import VerifyKey
@@ -33,8 +34,9 @@ def lambda_handler(request, lambda_context):
             'statusCode': 200,
             'body': json.dumps({'type': 1})
         }
-    except:
+    except Exception:
         # print("invalid")
+        # print(traceback.format_exc())
         return {
             'statusCode': 401,
             'body': json.dumps("invalid request signature")
