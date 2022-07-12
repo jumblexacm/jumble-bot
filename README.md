@@ -9,6 +9,8 @@
 
 - AWS account
 
+- Python 3.9 (with `pip`)
+
 
 ## STEP 1: Create the Discord bot
 
@@ -197,20 +199,7 @@ https://betterprogramming.pub/build-a-discord-bot-with-aws-lambda-api-gateway-cc
         - Under **"Advanced settings"**, check `Enable function URL`
         - Auth type: `NONE` (We'll authenticate within the Lambda function)
 
-2. Upload your code
-    - In your local terminal, run:
-    
-          cd task/
-          npm i tweetnacl # Install package
-          
-          touch ../lambda_bot.zip # Otherwise the first time, removing will raise an error
-          rm ../lambda_bot.zip # Otherwise, zipping won't replace the file
-          zip -r ../lambda_bot.zip *
-    
-    - In `jumble-bot-function`'s **"Code"** tab, **[Upload from]** the .zip file
-    - Click **[Deploy]**
-
-3. Upload your Discord app's public key to AWS
+2. Upload your Discord app's public key to AWS
     - Find the public key
         - Visit https://discord.com/developers/applications
         - Choose your app
@@ -221,9 +210,35 @@ https://betterprogramming.pub/build-a-discord-bot-with-aws-lambda-api-gateway-cc
         - Key: `PUBLIC_KEY`
         - Value: *[Input your Discord app's public key]*
 
-4. Add your Lambda function URL to Discord
+3. Install dependencies
+    - In your local terminal, run:
+    
+          cd task/
+          <!-- npm i tweetnacl -->
+          python3.9 -m pip install --target=pynacl/ pynacl
+
+4. Upload your code
+    - In your local terminal (still in `task/`), run:
+    
+          touch ../lambda_bot.zip # Otherwise the first time, removing will raise an error
+          rm ../lambda_bot.zip # Otherwise, zipping won't replace the file
+          zip -r ../lambda_bot.zip *
+    
+    - In `jumble-bot-function`'s **"Code"** tab, **[Upload from]** the .zip file
+    - Click **[Deploy]**
+
+5. Add your Lambda function URL to Discord
     - In `jumble-bot-function`'s **"Configuration"** tab, copy the function URL
     - In the Discord app's **"Interactions Endpoint URL"**, paste the function URL
+
+6. Confirm the Lambda function is running and properly authenticating Discord
+    - In `jumble-bot-function`'s **"Monitor"** tab, click **[View logs in CloudWatch]**
+    - Click **[Search log group]**
+    - Click `1m` to view the most recent logs
+    - Confirm the function ran without errors
+        - If the function didn't run, reset the interactions endpoint URL (by saving it as empty in the Discord development portal) and repeat steps 4 and 5
+        - If the function output an error, edit the code as needed, reset the interactions endpoint URL, and repeat steps 3 through 5
+        - If the function ran without errors, congratulations! Everything's connected!
 
 
 ## Resources
