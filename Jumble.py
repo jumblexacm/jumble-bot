@@ -28,7 +28,7 @@ async def on_message(message):
         'author_avatar_url': str(message.author.avatar_url),
         'date': message.created_at.strftime('%B %d, %Y'),
         'message_text': message.clean_content,
-        'attachmentUrls': attachment_urls,
+        'attachment-urls': attachment_urls,
     }
 
     #print(postData)
