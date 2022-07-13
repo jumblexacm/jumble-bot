@@ -2,12 +2,17 @@ import os
 import json
 import discord
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+MONGO_URI = os.getenv('MONGODB_URI')
 
 discordClient = discord.Client() 
+mongoClient = MongoClient(MONGO_URI)
 
+db = mongoClient.JumbleDB
+postsCollection = db.Posts
 
 @discordClient.event
 async def on_ready():
@@ -27,7 +32,8 @@ async def on_message(message):
         'attachmentUrls': attachment_urls,
     }
 
-    print(data)
+    print(postData)
+    postsCollection.insert_one(postData)
 
 
 
