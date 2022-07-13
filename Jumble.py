@@ -1,5 +1,4 @@
 import os
-import json
 import discord
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -32,7 +31,7 @@ async def on_message(message):
         'attachmentUrls': attachment_urls,
     }
 
-    print(postData)
+    #print(postData)
     postsCollection.insert_one(postData)
 
 
