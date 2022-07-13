@@ -72,6 +72,18 @@ Notes about community servers:
 TODO Add any other steps that Cannon followed
 
 
+## STEP 4: Deploy to Heroku
+
+1. In your terminal, `git push` your "branch to deploy"
+
+2. Under **"Manual deploy"**, click **[Deploy Branch]**
+
+3. On the first deployment only, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing)
+    - In your terminal:
+
+          heroku ps:scale worker=1
+
+
 ## Resources
 
 https://discord.com/developers/docs/resources/channel#get-channel-messages
