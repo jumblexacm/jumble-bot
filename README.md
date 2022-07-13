@@ -25,6 +25,8 @@ https://discord.com/developers/docs/intro
     - Choose your team from earlier (not your personal team)
 
 3. Add the redirect URI
+    - Menu section: **"Oauth2"**
+    - Click **[Add Redirect]**
     - Input your app's about page or another URL for the user to see after installing your app
 
 3. Create the bot  
