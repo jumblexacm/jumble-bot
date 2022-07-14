@@ -7,7 +7,7 @@
 
 - Discord server (your "dev server")
 
-- Heroku CLI
+- Python 3 (with `pip`)
 
 
 ## STEP 1: Create the Discord bot
@@ -59,29 +59,44 @@ Notes about community servers:
 - When someone edits the message in the student org server, it also updates in the dev server.
 
 
-## STEP 3: Set up the Heroku app
+## STEP 3: Set up your local environment
 
-1. Create the Heroku app
+1. Generate the MongoDB URI
+    - Create a [DNS-constructed seed list connection string](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
+    - TODO Let Nick make this step more clear/thorough
 
-2. Connect the Heroku app to GitHub
-    - Click **"Deploy"**
-    - Under **"Deployment method"**, connect the app to your GitHub account
-    - Choose the repo where you store your Heroku app's code
-    - Under **"Manual deploy"**, choose your "branch to deploy"
+2. Generate the Discord bot token
+    - Menu section: **"Bot"**
+    - Under **"Build-A-Bot"**, click `Reset Token` and copy it to somewhere safe
 
-TODO Add any other steps that Cannon followed
+3. Store secrets in `.env`
+    - Create a file `.env` in this repo's root directory
+    - Add two variables
+    - MONGODB_URI: *[Input the MongoDB URI]*
+    - DISCORD_TOKEN: *[Input the Discord bot token]*
+
+4. Install dependencies
+    - In your terminal, run:
+          
+          python3 -m pip install --target=discord/ -U discord.py
+          python3 -m pip install --target=dotenv/ -U python-dotenv
+          python3 -m pip install --target=pymongo/ -U "pymongo[srv]"
 
 
-## STEP 4: Deploy to Heroku
+## STEP 5: Run the app on your local machine
 
-1. In your terminal, `git push` your "branch to deploy"
+1. Start the app
+    - In your terminal, run:
+    
+          python3 Jumble.py
 
-2. Under **"Manual deploy"**, click **[Deploy Branch]**
+2. Wait for the bot to print, "We have logged in as..."
 
-3. On the first deployment only, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing)
-    - In your terminal:
+3. Post and publish a message in your test community server
 
-          heroku ps:scale worker=1
+4. See the new document in MongoDB :)
+
+5. When you're done testing, \<Ctrl+C>
 
 
 ## Resources
