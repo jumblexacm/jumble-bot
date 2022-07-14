@@ -7,6 +7,8 @@
 
 - Discord server (your "dev server")
 
+- Heroku account and Heroku CLI
+
 - Python 3 (with `pip`)
 
 
@@ -54,47 +56,91 @@ https://discord.com/developers/docs/intro
 
 4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot
 
+5. Consider creating another Discord app/bot, student org server, and dev server as your dev environment.
+
 Notes about community servers:
 - For a message to appear in the dev server, the person posting in the student org server must send the message *and* click "Publish."
 - When someone edits the message in the student org server, it also updates in the dev server.
 
 
-## STEP 3: Set up your local environment
+## STEP 3: Set up the Heroku app
 
-1. Generate the MongoDB URI
+1. Create the Heroku app
+
+2. Connect the Heroku app to GitHub
+    - Click **"Deploy"**
+    - Under **"Deployment method"**, connect the app to your GitHub account
+    - Choose the repo where you store your Heroku app's code
+    - Under **"Manual deploy"**, choose your "branch to deploy"
+
+TODO Add any other steps that Cannon followed
+
+3. Generate the MongoDB URI
     - Create a [DNS-constructed seed list connection string](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
     - TODO Let Nick make this step more clear/thorough
 
-2. Generate the Discord bot token
+4. Generate the Discord bot token
     - Menu section: **"Bot"**
     - Under **"Build-A-Bot"**, click `Reset Token` and copy it to somewhere safe
 
-3. Store secrets in `.env`
-    - Create a file `.env` in this repo's root directory
-    - Add two variables
-    - MONGODB_URI: *[Input the MongoDB URI]*
-    - DISCORD_TOKEN: *[Input the Discord bot token]*
+Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
-4. Install dependencies
+5. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
+    - Click **"Settings"**
+    - Under **"Config Vars"**, click **[Reveal Config Vars]**
+    - Add the first config var:
+        - KEY: `MONGODB_URI`
+        - VALUE: *[Input the MongoDB URI]*
+    - Add the second config var:
+        - KEY: `DISCORD_TOKEN`
+        - VALUE: *[Input the Discord bot token]*
+
+
+## STEP 4: Set up your local environment
+
+1. Store secrets in `.env`
     - In your terminal, run:
+        
+        HEROKU_APP_NAME=*<the name of your Heroku app as displayed in the Heroku Dashboard>*
+        echo $HEROKU_APP_NAME # Confirm it's set to the correct name
+        
+    - Then run:
           
-          python3 -m pip install --target=lib/ -r requirements.txt
+          heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
+    
+    - Then set `DISCORD_TOKEN` to your dev environment Discord bot's token OR run:
+          
+          heroku config:get DISCORD_TOKEN -s -a $HEROKU_APP_NAME >> .env
 
 
-## STEP 5: Run the app on your local machine
+## STEP 5: Test the app on your local machine
 
 1. Start the app
     - In your terminal, run:
     
-          python3 main.py
+          heroku local
+          # TODO Should this be `heroku local worker=1`?
 
-2. Wait for the bot to print, "We have logged in as..."
+2. Note that as far as [@kirmar](https://github.com/kirmar) can tell, the terminal doesn't output "We have logged in as..." until you \<Ctrl+C>
+    - TODO Is there a way to print everything immediately?
 
 3. Post and publish a message in your test community server
 
 4. See the new document in MongoDB :)
 
 5. When you're done testing, \<Ctrl+C>
+
+
+## STEP 6: Deploy to Heroku
+
+1. In your terminal, `git push` your "branch to deploy"
+
+2. Under **"Manual deploy"**, click **[Deploy Branch]**
+
+3. On the first deployment only, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing)
+    - In your terminal:
+
+          heroku ps:scale worker=1
 
 
 ## Resources

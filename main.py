@@ -1,14 +1,18 @@
 import os
-import sys
-
-sys.path.append('lib')
 import discord
-from dotenv import load_dotenv
 from pymongo import MongoClient
 
-load_dotenv()
-DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-MONGO_URI = os.getenv('MONGODB_URI')
+try:
+    # Import config vars on Heroku
+    DISCORD_TOKEN = process.env.DISCORD_TOKEN
+    MONGO_URI = process.env.MONGODB_URI
+except NameError as e:
+    if str(e) == "name 'process' is not defined":
+        # Import environment vars from .env on local machine
+        DISCORD_TOKEN = os.getenv('DISCORD_TOKEN_KIRA')
+        MONGO_URI = os.getenv('MONGODB_URI')
+    else:
+        raise
 
 discordClient = discord.Client() 
 mongoClient = MongoClient(MONGO_URI)
