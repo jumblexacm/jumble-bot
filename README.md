@@ -83,23 +83,22 @@ Notes about community servers:
 
 TODO Add any other steps that Cannon followed
 
-3. Generate the MongoDB URI
-    - Create a [DNS-constructed seed list connection string](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
-    - TODO Let Nick make this step more clear/thorough
-
-4. Generate the Discord bot token
-    - Open your Discord app in the Discord Developer Portal
-    - Menu section: **"Bot"**
-    - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere safe
-
-5. Find the Discord channel ID for the bot to watch
-    - Open your dev server
-    - Open the channel you want the bot to watch
-    - In the URL, save the second number
+3. Gather secrets
+    - Generate the MongoDB URI
+        - Create a [DNS-constructed seed list connection string](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
+        - TODO Let Nick make this step more clear/thorough
+    - Generate the Discord bot token
+        - Open your Discord app in the Discord Developer Portal
+        - Menu section: **"Bot"**
+        - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere safe
+    - Find the Discord channel ID for the bot to watch
+        - Open your dev server
+        - Open the channel you want the bot to watch
+        - In the URL, save the second number
 
 Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
-6. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
+4. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
     - In the Heroku Dashboard, click **"Settings"**
     - Under **"Config Vars"**, click **[Reveal Config Vars]**
     - Add the first config var:
@@ -112,12 +111,19 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
         - KEY: `BOT_CHANNEL_ID`
         - VALUE: *[Input the Discord channel ID]*
 
-7. Let Heroku access MongoDB
+5. Let Heroku access MongoDB
     - In MongoDB Atlas, click **"Network Access"**
     - Click **[Add IP address]**
     - Access List Entry: `0.0.0.0/0`
     - Comment: `All IP addresses so Heroku can access MongoDB`
     - Note: If you're uncomfortable allowing all IP addresses, a Heroku [add-on](https://www.mongodb.com/developer/products/atlas/use-atlas-on-heroku/#configuring-heroku-ip-addresses-in-mongodb-atlas) can create a static IP address. As far as [@kirmar] can tell, without [one of these solutions](https://www.mongodb.com/community/forums/t/connect-atlas-to-heroku-hosted-app/7202), the Heroko app doesn't work and Heroku logs a `ServerSelectionTimeoutError` when it tries to access the MongoDB database.
+
+6. Deploy the Heroku app as described in [step 6](https://github.com/jumblexacm/jumble-bot#step-6-deploy-to-heroku)
+
+7. After this very first deployment, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing)
+    - In your terminal, run:
+
+          heroku ps:scale worker=1 -a $HEROKU_APP_NAME
 
 
 ## STEP 4: Set up your Heroku CLI and local environment
@@ -157,18 +163,22 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 5. When you're done testing, \<Ctrl+C>
 
 
-## STEP 6: Deploy to Heroku and test the app
+## STEP 6: Deploy to Heroku
+
+<!-- Note: As of 2022-07-14, another step links to this one, so be careful changing the title or step number -->
 
 1. In your terminal, `git push` your "branch to deploy"
 
 2. Under **"Manual deploy"**, click **[Deploy Branch]**
 
-3. On the first deployment only, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing)
-    - In your terminal, run:
 
-          heroku ps:scale worker=1 -a $HEROKU_APP_NAME
+## STEP 7: Test the app
 
-4. After Heroku finishes deploying, try publishing an announcement in Discord, check MongoDB, and (if it's not working) view your Heroku logs
+1. Post and publish a message in your test community server
+
+2. See the new document in MongoDB :)
+
+3. View your Heroku logs
     - In your terminal, run:
     
           heroku logs --tail -a $HEROKU_APP_NAME
