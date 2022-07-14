@@ -48,7 +48,10 @@ def lambda_handler(request, lambda_context):
         }
     except Exception:
         # print("invalid")
-        # print(traceback.format_exc())
+        # Note: Replacing '\n' with '\r' lets CloudWatch Logs
+        # treat the exception as one "entry" instead of
+        # splitting each line into its own entry.
+        print(traceback.format_exc().replace('\n', '\r'))
         return {
             'statusCode': 401,
             'body': json.dumps("invalid request signature")
