@@ -6,6 +6,7 @@ from pymongo import MongoClient
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 MONGO_URI = os.getenv('MONGODB_URI')
+BOT_CHANNEL_ID = os.getenv('BOT_CHANNEL_ID')
 
 discordClient = discord.Client() 
 mongoClient = MongoClient(MONGO_URI)
@@ -19,6 +20,10 @@ async def on_ready():
 
 @discordClient.event
 async def on_message(message):
+    if message.channel.id != int(BOT_CHANNEL_ID):
+        # print("Message sent in channel the bot mustn't forward posts from")
+        return
+    
     attachment_urls = []
     for attachment in message.attachments:
         attachment_urls.append(attachment.url)
@@ -37,7 +42,7 @@ async def on_message(message):
         postsCollection.insert_one(postData)
     # else:
     #     print(
-    #         "No webhook ID, so not from a followed announcements channel."
+    #         "Message has no webhook ID, so not from a followed announcements channel."
     #         " postData:\n{0}".format(postData))
 
 discordClient.run(DISCORD_TOKEN)
