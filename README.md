@@ -135,6 +135,8 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
             - `Read`
                 - `GetAccountSettings` (to view the list of all functions in the Lambda console)
                 - `GetFunction` (to view a function's code, logs, and settings)
+                - `GetPolicy` (to create an API Gateway trigger)
+                - `GetFunctionEventInvokeConfig` (to view API Gateway triggers? but TODO it doesn't work still; `engineer` still sees no triggers in the Lambda function, even after adding one themself, while `admin` can see even a trigger added by an `engineer`)
             - `Write`
                 - `CreateFunction` (to create a function)
                 - `CreateFunctionUrlConfig` (to create a function URL)
@@ -164,11 +166,18 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
                 - `FilterLogEvents` (to view the list of Lambda "console" logs)
         - Resources: `All resources`
         - Request conditions: `MFA required`
+    - Add additional permissions
+        - Service: `API Gateway`
+        - Actions:
+            - `Read`
+                - `GET` (to view API Gateway triggers? but see the TODO)
+        - Resources: `All resources`
+        - Request conditions: `MFA required`
     - Name: `jumble-lambda-policy`
 
 2. Create an IAM engineer role
     - As earlier with `admin`, choose this account and require MFA
-    - However, add `jumble-lambda-policy` (not the "assume admin role" policy)
+    - However, add `jumble-lambda-policy`, `AWSLambdaRole` (to view API Gateway triggers? but see the TODO), and `AmazonAPIGatewayAdministrator`. Don't add the "assume admin role" policy
     - And name the role `engineer`
     - After creating the role, open its role summary to copy its ARN
 
@@ -233,11 +242,37 @@ https://betterprogramming.pub/build-a-discord-bot-with-aws-lambda-api-gateway-cc
     - In `jumble-bot-function`'s **"Code"** tab, **[Upload from]** the .zip file
     - Click **[Deploy]**
 
-5. Add your Lambda function URL to Discord
+5. Set up API Gateway
+    - Configuration > Triggers > Add trigger
+    - API Gateway > Create an API
+    - HTTP API
+    - Security: Open
+    - API name: jumble-bot-function-API
+    - Deployment stage: $default
+    - check `Cross-origin resource sharing (CORS)`
+    - After adding the trigger, copy the ARN
+    - Open `jumble-bot-function`'s role
+    - Add permissions
+        - Attach policies
+        - Create policy
+            - Service: `Lambda`
+            - Actions:
+                - `Write`
+                    - `InvokeFunction`
+            - Resources: `All resources`
+            - Request conditions: `Add condition`
+                - Condition key: `aws:SourceArn`
+                - Qualifier: `Default`
+                - Operator: `ArnLike`
+                - Value: *[Input the API Gateway API's ARN]*
+            - Name: `jumble-bot-function-api-trigger-policy`
+    - Back `jumble-bot-function`'s role, attach `jumble-bot-function-api-trigger-policy`
+
+6. Add your API Gateway URI to Discord
     - In `jumble-bot-function`'s **"Configuration"** tab, copy the function URL
     - In the Discord app's **"Interactions Endpoint URL"**, paste the function URL
 
-6. Confirm the Lambda function is running and properly authenticating Discord
+7. Confirm the Lambda function is running and properly authenticating Discord
     - In `jumble-bot-function`'s **"Monitor"** tab, click **[View logs in CloudWatch]**
     - Click **[Search log group]**
     - Click `1m` to view the most recent logs
