@@ -107,8 +107,8 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     - In MongoDB Atlas, click **"Network Access"**
     - Click **[Add IP address]**
     - Access List Entry: `0.0.0.0/0`
-    - Comment: `All IP addresses so Heroku can access (unsafe, so try to find another solution)`
-    - TODO Find a safer solution, like using a Heroku [add-on](https://www.mongodb.com/developer/products/atlas/use-atlas-on-heroku/#configuring-heroku-ip-addresses-in-mongodb-atlas) that creates a static IP address
+    - Comment: `All IP addresses so Heroku can access MongoDB`
+    - Note: If you're uncomfortable allowing all IP addresses, a Heroku [add-on](https://www.mongodb.com/developer/products/atlas/use-atlas-on-heroku/#configuring-heroku-ip-addresses-in-mongodb-atlas) can create a static IP address. As far as [@kirmar] can tell, without [one of these solutions](https://www.mongodb.com/community/forums/t/connect-atlas-to-heroku-hosted-app/7202), the Heroko app doesn't work and Heroku logs a `ServerSelectionTimeoutError` when it tries to access the MongoDB database.
 
 
 ## STEP 4: Set up your Heroku CLI and local environment
