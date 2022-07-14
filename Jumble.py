@@ -32,9 +32,12 @@ async def on_message(message):
         'attachment_urls': attachment_urls,
     }
 
-    #print(postData)
-    postsCollection.insert_one(postData)
-
-
+    if message.webhook_id:
+        # print(postData)
+        postsCollection.insert_one(postData)
+    # else:
+    #     print(
+    #         "No webhook ID, so not from a followed announcements channel."
+    #         " postData:\n{0}".format(postData))
 
 discordClient.run(DISCORD_TOKEN)
