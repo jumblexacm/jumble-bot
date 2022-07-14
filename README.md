@@ -88,7 +88,7 @@ Notes about community servers:
 1. Start the app
     - In your terminal, run:
     
-          python3 Jumble.py
+          python3 main.py
 
 2. Wait for the bot to print, "We have logged in as..."
 
