@@ -1,9 +1,7 @@
 import os
 import sys
 
-sys.path.append('discord')
-sys.path.append('dotenv')
-sys.path.append('pymongo')
+sys.path.append('lib')
 import discord
 from dotenv import load_dotenv
 from pymongo import MongoClient

@@ -1,4 +1,2 @@
 .env
-discord/
-dotenv/
-pymongo/
+lib/

@@ -78,9 +78,7 @@ Notes about community servers:
 4. Install dependencies
     - In your terminal, run:
           
-          python3 -m pip install --target=discord/ -U discord.py
-          python3 -m pip install --target=dotenv/ -U python-dotenv
-          python3 -m pip install --target=pymongo/ -U "pymongo[srv]"
+          python3 -m pip install --target=lib/ -r requirements.txt
 
 
 ## STEP 5: Run the app on your local machine
