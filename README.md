@@ -118,7 +118,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     - Comment: `All IP addresses so Heroku can access MongoDB`
     - Note: If you're uncomfortable allowing all IP addresses, a Heroku [add-on](https://www.mongodb.com/developer/products/atlas/use-atlas-on-heroku/#configuring-heroku-ip-addresses-in-mongodb-atlas) can create a static IP address. As far as [@kirmar] can tell, without [one of these solutions](https://www.mongodb.com/community/forums/t/connect-atlas-to-heroku-hosted-app/7202), the Heroko app doesn't work and Heroku logs a `ServerSelectionTimeoutError` when it tries to access the MongoDB database.
 
-6. Deploy the Heroku app as described in [step 6](https://github.com/jumblexacm/jumble-bot#step-6-deploy-to-heroku)
+6. Deploy the Heroku app as described in [step 6](#step-6-deploy-to-heroku)
 
 7. After this very first deployment, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing)
     - In your terminal, run:
