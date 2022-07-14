@@ -11,6 +11,7 @@ except NameError as e:
         # Import environment vars from .env on local machine
         DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
         MONGO_URI = os.getenv('MONGODB_URI')
+        BOT_CHANNEL_ID = os.getenv('BOT_CHANNEL_ID')
     else:
         raise
 
@@ -26,6 +27,10 @@ async def on_ready():
 
 @discordClient.event
 async def on_message(message):
+    if message.channel.id != int(BOT_CHANNEL_ID):
+        # print("Message sent in channel the bot mustn't forward posts from")
+        return
+    
     attachment_urls = []
     for attachment in message.attachments:
         attachment_urls.append(attachment.url)
@@ -39,9 +44,12 @@ async def on_message(message):
         'attachment_urls': attachment_urls,
     }
 
-    #print(postData)
-    postsCollection.insert_one(postData)
-
-
+    if message.webhook_id:
+        # print(postData)
+        postsCollection.insert_one(postData)
+    # else:
+    #     print(
+    #         "Message has no webhook ID, so not from a followed announcements channel."
+    #         " postData:\n{0}".format(postData))
 
 discordClient.run(DISCORD_TOKEN)

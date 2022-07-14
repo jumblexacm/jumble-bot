@@ -45,12 +45,12 @@ https://discord.com/developers/docs/intro
         - Under **"Scopes"**, check `bot`
         - Under **"Bot Permissions"**, check `Read Messages/View Channels`
     - As your redirect URL, choose your redirect URI from earlier
-    - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server, for now your dev server.
+    - Copy the generated URL, because it disappears if you navigate away from the page.
 
 5. Activate the bot
     - Use the generated URL to invite the bot to your dev server
-    - If the channel where you want the bot to listen is private, be sure to give the bot access
-    - Hide all other channels from the bot, otherwise it may add their messages to MongoDB
+    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to
+    - Under the channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
 
 
 ## STEP 2: Create a test student org server
@@ -66,8 +66,9 @@ https://discord.com/developers/docs/intro
 5. Consider creating another Discord app/bot, student org server, and dev server as your dev environment.
 
 Notes about community servers:
-- For a message to appear in the dev server, the person posting in the student org server must send the message *and* click "Publish."
-- When someone edits the message in the student org server, it also updates in the dev server.
+- For a message to appear in the dev server, you must post in the announcements channel *and* click "Publish."
+- When you publish, Discord may say, "You've reached your 10 published mesages per-hour limit. But we love the enthusiasm, so please try again in X minutes." Create an additional announcements channel, follow it from your dev server, and post in the new announcements channel for a while.
+- When you edit the message in the student org server, it also updates in the dev server.
 
 
 ## STEP 3: Set up the Heroku app
