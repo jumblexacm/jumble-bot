@@ -164,13 +164,6 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
           heroku logs --tail -a $HEROKU_APP_NAME
 
 
-## Resources
-
-https://discord.com/developers/docs/resources/channel#get-channel-messages
-
-https://github.com/kkrypt0nn/Python-Discord-Bot-Template
-
-
 ## Repo conventions
 
 Branch naming convention
