@@ -9,7 +9,7 @@ try:
 except NameError as e:
     if str(e) == "name 'process' is not defined":
         # Import environment vars from .env on local machine
-        DISCORD_TOKEN = os.getenv('DISCORD_TOKEN_KIRA')
+        DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
         MONGO_URI = os.getenv('MONGODB_URI')
     else:
         raise

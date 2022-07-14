@@ -7,6 +7,8 @@
 
 - Discord server (your "dev server")
 
+- MongoDB Atlas database
+
 - Heroku account and Heroku CLI
 
 - Python 3 (with `pip`)
@@ -80,13 +82,14 @@ TODO Add any other steps that Cannon followed
     - TODO Let Nick make this step more clear/thorough
 
 4. Generate the Discord bot token
+    - Open your Discord app in the Discord Developer Portal
     - Menu section: **"Bot"**
     - Under **"Build-A-Bot"**, click `Reset Token` and copy it to somewhere safe
 
 Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
 5. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
-    - Click **"Settings"**
+    - In the Heroku Dashboard, click **"Settings"**
     - Under **"Config Vars"**, click **[Reveal Config Vars]**
     - Add the first config var:
         - KEY: `MONGODB_URI`
@@ -95,16 +98,24 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
         - KEY: `DISCORD_TOKEN`
         - VALUE: *[Input the Discord bot token]*
 
+6. Let Heroku access MongoDB
+    - In MongoDB Atlas, click **"Network Access"**
+    - Click **[Add IP address]**
+    - Access List Entry: `0.0.0.0/0`
+    - Comment: `All IP addresses so Heroku can access (unsafe, so try to find another solution)`
+    - TODO Find a safer solution, like using a Heroku [add-on](https://www.mongodb.com/developer/products/atlas/use-atlas-on-heroku/#configuring-heroku-ip-addresses-in-mongodb-atlas) that creates a static IP address
 
-## STEP 4: Set up your local environment
 
-1. Store secrets in `.env`
+## STEP 4: Set up your Heroku CLI and local environment
+
+1. Set your `$HEROKU_APP_NAME` environment variable
     - In your terminal, run:
-        
-        HEROKU_APP_NAME=*<the name of your Heroku app as displayed in the Heroku Dashboard>*
-        echo $HEROKU_APP_NAME # Confirm it's set to the correct name
-        
-    - Then run:
+          
+          HEROKU_APP_NAME=*<the name of your Heroku app as displayed in the Heroku Dashboard>*
+          echo $HEROKU_APP_NAME # Confirm it's set to the correct name
+
+2. Store secrets in `.env`
+    - In your terminal, run:
           
           heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
     
@@ -131,16 +142,21 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 5. When you're done testing, \<Ctrl+C>
 
 
-## STEP 6: Deploy to Heroku
+## STEP 6: Deploy to Heroku and test the app
 
 1. In your terminal, `git push` your "branch to deploy"
 
 2. Under **"Manual deploy"**, click **[Deploy Branch]**
 
 3. On the first deployment only, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing)
-    - In your terminal:
+    - In your terminal, run:
 
-          heroku ps:scale worker=1
+          heroku ps:scale worker=1 -a $HEROKU_APP_NAME
+
+4. After Heroku finishes deploying, try publishing an announcement in Discord, check MongoDB, and (if it's not working) view your Heroku logs
+    - In your terminal, run:
+    
+          heroku logs --tail -a $HEROKU_APP_NAME
 
 
 ## Resources
