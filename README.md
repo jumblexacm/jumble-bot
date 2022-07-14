@@ -55,8 +55,9 @@ https://discord.com/developers/docs/intro
 4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot
 
 Notes about community servers:
-- For a message to appear in the dev server, the person posting in the student org server must send the message *and* click "Publish."
-- When someone edits the message in the student org server, it also updates in the dev server.
+- For a message to appear in the dev server, you must post in the announcements channel *and* click "Publish."
+- When you publish, Discord may say, "You've reached your 10 published mesages per-hour limit. But we love the enthusiasm, so please try again in X minutes." Create an additional announcements channel, follow it from your dev server, and post in the new announcements channel for a while.
+- When you edit the message in the student org server, it also updates in the dev server.
 
 
 ## STEP 3: Create the admin IAM role and first user
