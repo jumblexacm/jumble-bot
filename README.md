@@ -47,6 +47,11 @@ https://discord.com/developers/docs/intro
     - As your redirect URL, choose your redirect URI from earlier
     - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server, for now your dev server.
 
+5. Activate the bot
+    - Use the generated URL to invite the bot to your dev server
+    - If the channel where you want the bot to listen is private, be sure to give the bot access
+    - Hide all other channels from the bot, otherwise it may add their messages to MongoDB
+
 
 ## STEP 2: Create a test student org server
 
