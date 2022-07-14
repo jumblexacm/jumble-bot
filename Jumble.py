@@ -24,6 +24,7 @@ async def on_message(message):
         attachment_urls.append(attachment.url)
 
     postData = {
+        'message_id': message.id,
         'message_author': message.author.display_name.rsplit('#', 1)[0],
         'author_avatar_url': str(message.author.avatar_url),
         'date': message.created_at.strftime('%B %d, %Y'),
