@@ -45,7 +45,7 @@ https://discord.com/developers/docs/intro
         - Under **"Scopes"**, check `bot`
         - Under **"Bot Permissions"**, check `Read Messages/View Channels`
     - As your redirect URL, choose your redirect URI from earlier
-    - Copy the generated URL, because it disappears if you navigate away from the page.
+    - Save the generated URL, because it disappears if you navigate away from the page
 
 5. Activate the bot
     - Use the generated URL to invite the bot to your dev server
@@ -90,11 +90,16 @@ TODO Add any other steps that Cannon followed
 4. Generate the Discord bot token
     - Open your Discord app in the Discord Developer Portal
     - Menu section: **"Bot"**
-    - Under **"Build-A-Bot"**, click `Reset Token` and copy it to somewhere safe
+    - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere safe
+
+5. Find the Discord channel ID for the bot to watch
+    - Open your dev server
+    - Open the channel you want the bot to watch
+    - In the URL, save the second number
 
 Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
-5. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
+6. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
     - In the Heroku Dashboard, click **"Settings"**
     - Under **"Config Vars"**, click **[Reveal Config Vars]**
     - Add the first config var:
@@ -103,8 +108,11 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     - Add the second config var:
         - KEY: `DISCORD_TOKEN`
         - VALUE: *[Input the Discord bot token]*
+    - Add the third config var:
+        - KEY: `BOT_CHANNEL_ID`
+        - VALUE: *[Input the Discord channel ID]*
 
-6. Let Heroku access MongoDB
+7. Let Heroku access MongoDB
     - In MongoDB Atlas, click **"Network Access"**
     - Click **[Add IP address]**
     - Access List Entry: `0.0.0.0/0`
@@ -124,6 +132,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     - In your terminal, run:
           
           heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
+          heroku config:get BOT_CHANNEL_ID -s -a $HEROKU_APP_NAME >> .env
     
     - Then set `DISCORD_TOKEN` to your dev environment Discord bot's token OR run:
           
