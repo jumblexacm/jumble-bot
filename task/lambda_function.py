@@ -35,48 +35,6 @@ def lambda_handler(request, lambda_context):
     # Unfortunately, that's not why the signature's invalid.
     body = request['body']
     
-    # dict = {'abc': 1,'def':'gehij', 'klm': { 0: 2, 3: 4 }}
-    # print("test: {'abc': 1,'def':'gehij', 'klm': { 0: 2, 3: 4 }}")
-    # print(f"test 2: {dict}")
-    # print(dict)
-    # 
-    # dict3 = "{'abc': 1,'def':'gehij', 'klm': { 0: 2, 3: 4 }}"
-    # print(f"test 4: {dict3}")
-    # print(dict3)
-    # 
-    # dict4 = '{"abc": 1,"def":"gehij", "klm": { 0: 2, 3: 4 }}'
-    # print(f"test 6: {dict4}")
-    # print(dict4)
-    # 
-    # dict5 = '{"abc":1,"def":"gehij","klm":{0:2,3:4}}'
-    # print(f"test 8: {dict5}")
-    # print(dict5)
-    # 
-    # # only double quotes, no spaces, only string keys/values
-    # dict6 = '{"abc":"xyz", "def":"gehij"}'
-    # print(f"test 10: {dict6}")
-    # print(dict6)
-    # 
-    # dict6 = '{"abc":"xyz","def":"gehij"}'
-    # print(dict7)
-    # print({'test 13': dict7})
-    # 
-    # dict8 = "{'abc': 'xyz', 'def'  :'gehij'}"
-    # print(f"test 14: {dict8}")
-    # print(dict8)
-    # 
-    # print(f"request: {request}")
-    # # print("(timestamp + body).encode() == timestamp.encode() + body.encode(): "
-    # #       + str((timestamp + body).encode() == timestamp.encode() + body.encode()))
-    # print(f"body: {body}")
-    # print('"," in body: ' + str('","' in body))
-    # print('"," in timestamp + body: ' + str('","' in timestamp + body))
-    # print(f"timestamp + body: {timestamp + body}")
-    # print(f"(timestamp + body).encode(): {(timestamp + body).encode()}")
-    # print(f"bytes.fromhex(signature): {bytes.fromhex(signature)}")
-    # 
-    # print()
-    
     # print("signature: " + signature)
     # print("timestamp: " + timestamp)
     # print("type(body): " + str(type(body)))
