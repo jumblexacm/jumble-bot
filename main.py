@@ -10,12 +10,15 @@ try:
     DISCORD_TOKEN = process.env.DISCORD_TOKEN
     MONGODB_URI = process.env.MONGODB_URI
 except NameError as e:
-    if str(e) == "name 'process' is not defined":
+    if str(e) != "name 'process' is not defined":
+        raise
+    try:
         # Import environment vars from .env on local machine
-        DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-        MONGODB_URI = os.getenv('MONGODB_URI')
-        BOT_CHANNEL_ID = os.getenv('BOT_CHANNEL_ID')
-    else:
+        DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
+        MONGODB_URI = os.environ['MONGODB_URI']
+        BOT_CHANNEL_ID = os.environ['BOT_CHANNEL_ID']
+    except KeyError:
+        print(f"os.environ keys: {sorted(list(os.environ.keys()))}")
         raise
 
 discord_client = discord.Client()
