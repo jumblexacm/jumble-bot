@@ -65,12 +65,12 @@ async def on_message(message):
 
 @discord_client.event
 async def on_message_edit(before, after):
-    # TODO Should this be on on_raw_message_edit()?
+    # TODO Should this be on_raw_message_edit()?
     raise Exception("Not yet implemented")
 
 @discord_client.event
-async def on_message_delete(before, after):
-    # TODO Should this be on_raw_message_delete?
+async def on_message_delete(message):
+    # TODO Should this be on_raw_message_delete()?
     raise Exception("Not yet implemented")
 
 discord_client.run(DISCORD_TOKEN)
