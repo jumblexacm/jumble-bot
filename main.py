@@ -41,7 +41,7 @@ def get_post_data(message):
 def in_correct_channel(message):
     """Verify message is from bot's assigned "to-watch" channel."""
     if message.channel.id != int(BOT_CHANNEL_ID):
-        print("Message sent in a channel that bot isn't assigned to watch.")
+        print("Message from a channel that bot isn't assigned to watch.")
         return False
     return True
 
@@ -61,10 +61,11 @@ def from_followed_channel(message, post_data, processing="processing"):
     if success:
         print(
             "Message from a followed announcements channel." # probably :)
-            f"\nBot is {processing} message.")
+            f"\n   Bot is {processing} message.")
     else:
-        print(f"\nBot is not {processing} message.")
-    print(f"   post_data: {post_data}")
+        print(f"   Bot is not {processing} message.")
+    if post_data:
+        print(f"   post_data: {post_data}")
     return success
 
 @discord_client.event
