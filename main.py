@@ -41,9 +41,7 @@ def get_post_data(message):
 def in_correct_channel(message):
     """Verify message is from bot's assigned "to-watch" channel."""
     if message.channel.id != int(BOT_CHANNEL_ID):
-        print(
-            "Message sent in a channel that bot mustn't forward posts from."
-            " Bot is not forwarding to MongoDB.")
+        print("Message sent in a channel that bot isn't assigned to watch.")
         return False
     return True
 
@@ -54,10 +52,20 @@ def from_webhook(message):
     if not message.webhook_id:
         print(
             "Message has no webhook ID,"
-            " so not from a followed announcements channel."
-            " Bot is not forwarding to MongoDB.")
+            " so not from a followed announcements channel.")
         return False
     return True
+
+def from_followed_channel(message, post_data, processing="processing"):
+    success = in_correct_channel(message) and from_webhook(message)
+    if success:
+        print(
+            "Message from a followed announcements channel." # probably :)
+            f"\nBot is {processing} message.")
+    else:
+        print(f"\nBot is not {processing} message.")
+    print(f"   post_data: {post_data}")
+    return success
 
 @discord_client.event
 async def on_ready():
@@ -65,12 +73,9 @@ async def on_ready():
 
 @discord_client.event
 async def on_message(message):
-    if not in_correct_channel(message) or not from_webhook(message):
-        return
     post_data = get_post_data(message)
-    print(
-        "Message from a followed channel. Bot is forwarding to MongoDB."
-        f"   post_data: {post_data}")
+    if not from_followed_channel(message, post_data, processing="forwarding"):
+        return
     posts_collection.insert_one(post_data)
 
 @discord_client.event
