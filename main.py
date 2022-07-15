@@ -84,9 +84,41 @@ async def on_message_edit(before, after):
     # TODO Should this be on_raw_message_edit()?
     raise Exception("Not yet implemented")
 
+# @discord_client.event
+# async def on_message_delete(message):
+#     """When a followed announcement is deleted, delete it in MongoDB.
+#     Note that this function is called only if the deleted message was
+#     originally sent during this `discord_client`'s lifetime / during
+#     the current Heroku "session.""""
+#     # TODO Get `on_message_delete()` for messages that were sent
+#     # in a previous app/bot run session
+#     post_data = get_post_data(message)
+#     if not from_followed_channel(message, post_data, processing="deleting"):
+#         return
+#     posts_collection.delete_one({ 'message_id': message.id })
+
 @discord_client.event
-async def on_message_delete(message):
-    # TODO Should this be on_raw_message_delete()?
-    raise Exception("Not yet implemented")
+async def on_raw_message_delete(payload):
+    """When any message is deleted, try to delete it in MongoDB.
+    This function is called even if the deleted message was
+    originally sent before this `discord_client`'s lifetime / during a
+    previous Heroku "session." However, it tries to delete a MongoDB
+    document no matter what and doesn't check the channel/webhook IDs."""
+    
+    # Only for Users, not Clients:
+    # message = await discord_client.get_message(payload.message_id)
+    
+    # "ValueError: <id> is not in deque"
+    # message = discord_client.cached_messages[discord_client.cached_messages.index(payload.message_id)]
+    
+    # post_data = get_post_data(message)
+    # if not from_followed_channel(message, post_data, processing="deleting"):
+    #     return
+    
+    message_id = payload.message_id
+    print(
+        "Bot is attempting to delete message."
+        f"   message_id: {message_id}")
+    posts_collection.delete_one({ 'message_id': message_id })
 
 discord_client.run(DISCORD_TOKEN)
