@@ -45,19 +45,22 @@ async def on_ready():
 @discord_client.event
 async def on_message(message):
     if message.channel.id != int(BOT_CHANNEL_ID):
-        print("Message sent in a channel that bot mustn't forward posts from.")
+        print(
+            "Message sent in a channel that bot mustn't forward posts from."
+            " Bot is not forwarding to MongoDB.")
         return
     
     post_data = get_post_data(message)
     if message.webhook_id:
         print(
-            "Message from a followed channel, so bot is forwarding to MongoDB."
+            "Message from a followed channel. Bot is forwarding to MongoDB."
             f"   post_data: {post_data}")
         posts_collection.insert_one(post_data)
     else:
         print(
             "Message has no webhook ID,"
             " so not from a followed announcements channel."
+            " Bot is not forwarding to MongoDB."
             f"   post_data: {post_data}")
 
 discord_client.run(DISCORD_TOKEN)
