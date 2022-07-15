@@ -145,6 +145,11 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
           
           heroku config:get DISCORD_TOKEN -s -a $HEROKU_APP_NAME >> .env
 
+2. Install dependencies
+    - In your terminal, run:
+    
+        python3 -m pip install --target=lib/ -r requirements.txt
+
 
 ## STEP 5: Test the app on your local machine
 
