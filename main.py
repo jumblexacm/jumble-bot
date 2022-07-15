@@ -111,6 +111,11 @@ async def on_raw_message_delete(payload):
     # "ValueError: <id> is not in deque"
     # message = discord_client.cached_messages[discord_client.cached_messages.index(payload.message_id)]
     
+    # "discord.errors.NotFound: 404 Not Found (error code: 10008): Unknown Message"
+    # "Read Message History" and "Manage Messages" don't seem to help
+    # channel = discord_client.get_channel(payload.channel_id)
+    # message = await channel.fetch_message(payload.message_id)
+    
     message = payload.cached_message
     message_id = payload.message_id
     
