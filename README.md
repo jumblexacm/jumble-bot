@@ -79,7 +79,6 @@ Notes about community servers:
     - Click **"Deploy"**
     - Under **"Deployment method"**, connect the app to your GitHub account
     - Choose the repo where you store your Heroku app's code
-    - Under **"Manual deploy"**, choose your "branch to deploy"
 
 TODO Add any other steps/details that Cannon followed
 
@@ -169,9 +168,11 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 
 <!-- Note: As of 2022-07-14, another step links to this one, so be careful changing the title or step number -->
 
-1. In your terminal, `git push` your "branch to deploy"
+1. In your terminal, `git push` your branch
 
-2. Under **"Manual deploy"**, click **[Deploy Branch]**
+2. In the Heroku Dashboard, under **"Manual deploy"**, choose your current branch
+
+3. Click **[Deploy Branch]**
 
 
 ## STEP 7: Test the app
