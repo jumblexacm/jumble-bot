@@ -84,17 +84,15 @@ Notes about community servers:
 TODO Add any other steps that Cannon followed
 
 3. Gather secrets
-    - Generate the MongoDB URI
-        - Create a [DNS-constructed seed list connection string](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
-        - Go to Database Deployments in MongoDB Atlas
-        - Next to Jumble, click **Connect**
-        - Click **Connect Your Application**
-        - Specify your `DRIVER` and `VERSION`
-        - Copy the generated MongoDB URI and replace `<password>` with the password for the specified user
+    - Generate the [MongoDB URI](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
+        - In MongoDB Atlas, click **"Database"** to open the Database Deployments page
+        - Next to Jumble, click **[Connect]**
+        - Click **[Connect Your Application]**
+        - Copy the generated MongoDB URI, replace `<password>` with the password for the specified user, and save it somewhere secure
     - Generate the Discord bot token
         - Open your Discord app in the Discord Developer Portal
         - Menu section: **"Bot"**
-        - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere safe
+        - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere secure
     - Find the Discord channel ID for the bot to watch
         - Open your dev server
         - Open the channel you want the bot to watch
