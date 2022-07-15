@@ -111,14 +111,24 @@ async def on_raw_message_delete(payload):
     # "ValueError: <id> is not in deque"
     # message = discord_client.cached_messages[discord_client.cached_messages.index(payload.message_id)]
     
-    # post_data = get_post_data(message)
-    # if not from_followed_channel(message, post_data, processing="deleting"):
-    #     return
-    
+    message = payload.cached_message
     message_id = payload.message_id
-    print(
-        "Bot is attempting to delete message."
-        f"   message_id: {message_id}")
+    
+    if message:
+        post_data = get_post_data(message)
+        if not from_followed_channel(
+            message, post_data, processing="deleting"):
+            return
+    else:
+        # If message was sent before this `discord_client`'s lifetime,
+        # then `message` is None. Just spend some extra effort trying
+        # to delete a possibly-nonexistent document from MongoDB.
+        # Source: https://stackoverflow.com/a/64227013
+        print(
+            "Message may or may not be from a followed announcements channel."
+            "\n   Bot is attempting to delete message."
+            f"   message_id: {message_id}")
+    
     posts_collection.delete_one({ 'message_id': message_id })
 
 discord_client.run(DISCORD_TOKEN)
