@@ -24,6 +24,20 @@ mongoClient = MongoClient(MONGO_URI)
 db = mongoClient.JumbleDB
 postsCollection = db.Posts
 
+def get_post_data(message):
+    attachment_urls = []
+    for attachment in message.attachments:
+        attachment_urls.append(attachment.url)
+    
+    return {
+        'message_id': message.id,
+        'message_author': message.author.display_name.rsplit('#', 1)[0],
+        'author_avatar_url': str(message.author.avatar_url),
+        'date': message.created_at.strftime('%B %d, %Y'),
+        'message_text': message.clean_content,
+        'attachment_urls': attachment_urls,
+    }
+
 @discordClient.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(discordClient))
@@ -34,19 +48,7 @@ async def on_message(message):
         print("Message sent in channel the bot mustn't forward posts from")
         return
     
-    attachment_urls = []
-    for attachment in message.attachments:
-        attachment_urls.append(attachment.url)
-
-    postData = {
-        'message_id': message.id,
-        'message_author': message.author.display_name.rsplit('#', 1)[0],
-        'author_avatar_url': str(message.author.avatar_url),
-        'date': message.created_at.strftime('%B %d, %Y'),
-        'message_text': message.clean_content,
-        'attachment_urls': attachment_urls,
-    }
-
+    postData = get_post_data()
     if message.webhook_id:
         print(
             "Message from a followed channel. Sending to MongoDB."
