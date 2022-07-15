@@ -102,8 +102,7 @@ async def on_raw_message_delete(payload):
     """When any message is deleted, try to delete it in MongoDB.
     This function is called even if the deleted message was
     originally sent before this `discord_client`'s lifetime / during a
-    previous Heroku "session." However, it tries to delete a MongoDB
-    document no matter what and doesn't check the channel/webhook IDs."""
+    previous Heroku "session." """
     
     # Only for Users, not Clients:
     # message = await discord_client.get_message(payload.message_id)
