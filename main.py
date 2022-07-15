@@ -38,30 +38,40 @@ def get_post_data(message):
         'attachment_urls': attachment_urls,
     }
 
+def in_correct_channel(message):
+    """Verify message is from bot's assigned "to-watch" channel."""
+    if message.channel.id != int(BOT_CHANNEL_ID):
+        print(
+            "Message sent in a channel that bot mustn't forward posts from."
+            " Bot is not forwarding to MongoDB.")
+        return False
+    return True
+
+def from_webhook(message):
+    """Verify message is from a webhook.
+    Note: The message may or may not be
+    from a Channel Follower Webhook."""
+    if not message.webhook_id:
+        print(
+            "Message has no webhook ID,"
+            " so not from a followed announcements channel."
+            " Bot is not forwarding to MongoDB.")
+        return False
+    return True
+
 @discord_client.event
 async def on_ready():
     print(f"We have logged in as @{discord_client.user}")
 
 @discord_client.event
 async def on_message(message):
-    if message.channel.id != int(BOT_CHANNEL_ID):
-        print(
-            "Message sent in a channel that bot mustn't forward posts from."
-            " Bot is not forwarding to MongoDB.")
+    if not in_correct_channel(message) or not from_webhook(message):
         return
-    
     post_data = get_post_data(message)
-    if message.webhook_id:
-        print(
-            "Message from a followed channel. Bot is forwarding to MongoDB."
-            f"   post_data: {post_data}")
-        posts_collection.insert_one(post_data)
-    else:
-        print(
-            "Message has no webhook ID,"
-            " so not from a followed announcements channel."
-            " Bot is not forwarding to MongoDB."
-            f"   post_data: {post_data}")
+    print(
+        "Message from a followed channel. Bot is forwarding to MongoDB."
+        f"   post_data: {post_data}")
+    posts_collection.insert_one(post_data)
 
 @discord_client.event
 async def on_message_edit(before, after):
