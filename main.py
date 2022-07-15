@@ -8,55 +8,53 @@ from pymongo import MongoClient
 try:
     # Import config vars on Heroku
     DISCORD_TOKEN = process.env.DISCORD_TOKEN
-    MONGO_URI = process.env.MONGODB_URI
+    MONGODB_URI = process.env.MONGODB_URI
 except NameError as e:
     if str(e) == "name 'process' is not defined":
         # Import environment vars from .env on local machine
         DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-        MONGO_URI = os.getenv('MONGODB_URI')
+        MONGODB_URI = os.getenv('MONGODB_URI')
         BOT_CHANNEL_ID = os.getenv('BOT_CHANNEL_ID')
     else:
         raise
 
-discordClient = discord.Client() 
-mongoClient = MongoClient(MONGO_URI)
+discord_client = discord.Client()
+mongo_client = MongoClient(MONGODB_URI)
 
-db = mongoClient.JumbleDB
-postsCollection = db.Posts
+db = mongo_client.JumbleDB
+posts_collection = db.Posts
 
 def get_post_data(message):
-    attachment_urls = []
-    for attachment in message.attachments:
-        attachment_urls.append(attachment.url)
-    
+    attachment_urls = [attachment.url for attachment in message.attachments]
     return {
         'message_id': message.id,
-        'message_author': message.author.display_name.rsplit('#', 1)[0],
+        'message_author': message.author.display_name.rsplit("#", 1)[0],
         'author_avatar_url': str(message.author.avatar_url),
-        'date': message.created_at.strftime('%B %d, %Y'),
+        'date': message.created_at.strftime("%B %d, %Y"),
         'message_text': message.clean_content,
         'attachment_urls': attachment_urls,
     }
 
-@discordClient.event
+@discord_client.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(discordClient))
+    print(f"We have logged in as @{discord_client.user}")
 
-@discordClient.event
+@discord_client.event
 async def on_message(message):
     if message.channel.id != int(BOT_CHANNEL_ID):
-        print("Message sent in channel the bot mustn't forward posts from")
+        print("Message sent in a channel that bot mustn't forward posts from.")
         return
     
-    postData = get_post_data()
+    post_data = get_post_data(message)
     if message.webhook_id:
         print(
-            "Message from a followed channel. Sending to MongoDB."
-            " postData:\n{0}".format(postData))
-        postsCollection.insert_one(postData)
+            "Message from a followed channel, so bot is forwarding to MongoDB."
+            f"   post_data: {post_data}")
+        posts_collection.insert_one(post_data)
     else:
         print(
-            "Message has no webhook ID, so not from a followed announcements channel."
-            " postData:\n{0}".format(postData))
+            "Message has no webhook ID,"
+            " so not from a followed announcements channel."
+            f"   post_data: {post_data}")
 
-discordClient.run(DISCORD_TOKEN)
+discord_client.run(DISCORD_TOKEN)
