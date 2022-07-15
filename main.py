@@ -117,39 +117,19 @@ async def on_raw_message_edit(payload):
               # message: the message with "[Original Message Deleted]"
         )
 
-# @discord_client.event
-# async def on_message_delete(message):
-#     """When a followed announcement is deleted, delete it in MongoDB.
-#     Note that this function is called only if the deleted message was
-#     originally sent during this `discord_client`'s lifetime / during
-#     the current Heroku "session.""""
-#     # TODO Get `on_message_delete()` for messages that were sent
-#     # in a previous app/bot run session
-#     post_data = get_post_data(message)
-#     if not from_followed_channel(message, post_data, processing="deleting"):
-#         return
-#     posts_collection.delete_one({ 'message_id': message.id })
-
 @discord_client.event
 async def on_raw_message_delete(payload):
-    """When any message is deleted, try to delete it in MongoDB.
-    This function is called even if the deleted message was
-    originally sent before this `discord_client`'s lifetime / during a
-    previous Heroku "session." """
-    
-    # Only for Users, not Clients:
-    # message = await discord_client.get_message(payload.message_id)
-    
-    # "ValueError: <id> is not in deque"
-    # message = discord_client.cached_messages[discord_client.cached_messages.index(payload.message_id)]
-    
-    # "discord.errors.NotFound: 404 Not Found (error code: 10008): Unknown Message"
-    # "Read Message History" and "Manage Messages" don't seem to help
-    # channel = discord_client.get_channel(payload.channel_id)
-    # message = await channel.fetch_message(payload.message_id)
+    """Note: An 'on_raw' function is called even if the message was
+    originally sent before this `discord.Client()`'s lifetime / during
+    a previous Heroku "session." """
     
     message_id = payload.message_id
+    
+    # Do NOT use `channel.fetch_message()`; it raises a
+    # "discord.errors.NotFound: ... Unknown Message"
+    # because the message was deleted.
     message = payload.cached_message
+    
     delete(message_id, message)
 
 discord_client.run(DISCORD_TOKEN)
