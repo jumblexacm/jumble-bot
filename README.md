@@ -165,6 +165,9 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 3. Post and publish a message in your test community server
 
 4. See the new document in MongoDB :)
+    - In MongoDB Atlas, click **"Database"** to open the Database Deployments page
+    - Next to Jumble, click **[Browse Collections]**
+    - Scroll to the last query result
 
 5. When you're done testing, \<Ctrl+C>
 
