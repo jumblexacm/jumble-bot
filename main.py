@@ -57,6 +57,7 @@ def from_webhook(message):
     return True
 
 def from_followed_channel(message, post_data, processing="processing"):
+    print()
     success = in_correct_channel(message) and from_webhook(message)
     if success:
         print(
@@ -79,10 +80,42 @@ async def on_message(message):
         return
     posts_collection.insert_one(post_data)
 
+def delete(message_id, message):
+    if message:
+        post_data = get_post_data(message)
+        if not from_followed_channel(
+            message, post_data, processing="deleting"):
+            return
+    else:
+        # If message was sent before this `discord_client`'s lifetime,
+        # then `message` is None if it's `payload.cached_message`.
+        # Just spend some extra effort trying to delete a
+        # possibly-nonexistent document from MongoDB.
+        # Source: https://stackoverflow.com/a/64227013
+        print()
+        print(
+            "Message may or may not be from a followed announcements channel."
+            "\n   Bot is attempting to delete message."
+            f"   message_id: {message_id}")
+    
+    posts_collection.delete_one({ 'message_id': message_id })
+
 @discord_client.event
-async def on_message_edit(before, after):
-    # TODO Should this be on_raw_message_edit()?
-    raise Exception("Not yet implemented")
+async def on_raw_message_edit(payload):
+    message_id = payload.message_id
+    
+    # Do NOT use `payload.cached_message`; it's the unedited message.
+    channel = discord_client.get_channel(payload.channel_id)
+    message = await channel.fetch_message(message_id)
+    
+    if message.clean_content == "[Original Message Deleted]":
+        return delete(
+            message_id,
+            payload.cached_message or message
+              # payload.cached_message: original, unedited message
+              # or: if it doesn't exist, send `message`
+              # message: the message with "[Original Message Deleted]"
+        )
 
 # @discord_client.event
 # async def on_message_delete(message):
@@ -115,24 +148,8 @@ async def on_raw_message_delete(payload):
     # channel = discord_client.get_channel(payload.channel_id)
     # message = await channel.fetch_message(payload.message_id)
     
-    message = payload.cached_message
     message_id = payload.message_id
-    
-    if message:
-        post_data = get_post_data(message)
-        if not from_followed_channel(
-            message, post_data, processing="deleting"):
-            return
-    else:
-        # If message was sent before this `discord_client`'s lifetime,
-        # then `message` is None. Just spend some extra effort trying
-        # to delete a possibly-nonexistent document from MongoDB.
-        # Source: https://stackoverflow.com/a/64227013
-        print(
-            "Message may or may not be from a followed announcements channel."
-            "\n   Bot is attempting to delete message."
-            f"   message_id: {message_id}")
-    
-    posts_collection.delete_one({ 'message_id': message_id })
+    message = payload.cached_message
+    delete(message_id, message)
 
 discord_client.run(DISCORD_TOKEN)
