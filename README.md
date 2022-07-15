@@ -86,7 +86,11 @@ TODO Add any other steps that Cannon followed
 3. Gather secrets
     - Generate the MongoDB URI
         - Create a [DNS-constructed seed list connection string](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
-        - TODO Let Nick make this step more clear/thorough
+        - Go to Database Deployments in MongoDB Atlas
+        - Next to Jumble, click **Connect**
+        - Click **Connect Your Application**
+        - Specify your `DRIVER` and `VERSION`
+        - Copy the generated MongoDB URI and replace `<password>` with the password for the specified user
     - Generate the Discord bot token
         - Open your Discord app in the Discord Developer Portal
         - Menu section: **"Bot"**
