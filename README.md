@@ -195,6 +195,61 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
           heroku logs --tail -a $HEROKU_APP_NAME
 
 
+## Test cases
+
+
+### Deletion
+
+#### Send and delete in a single `discord.Client()` session:
+
+1. "will delete": Delete from test community server
+
+2. "will fake delete": Edit in test community server to say "[Original Message Deleted]"
+
+3. "will manually delete": Delete manually in dev server
+
+The suggested message text here is to give you less to think about as you test and to help identify the entries in MongoDB :)
+
+Expected result:
+- Before deletion, all three are in MongoDB
+- After deletion, none are in MongoDB
+
+#### Send in one session and delete in another
+
+1. "will delete next time"
+2. "will fake delete next time"
+3. "will manually delete next time"
+
+Expected result:
+- Before deletion, all three are in MongoDB.
+- After deletion, none are in MongoDB.
+
+#### Send when bot is offline and delete when online
+
+1. "will delete on start"
+2. "will fake delete on start"
+3. "will manually delete on start"
+
+Expected result:
+- Before and after deletion, none are in MongoDB.
+- However, a delete function triggers for each and doesn't crash.
+
+#### Delete non-announcement messages
+
+1. Delete a welcome message: "Welcome, so-and-so. We hope you brought pizza." This one isn't too important, so it doesn't matter when the message was sent.
+
+2. Delete a channel follow message: "so-and-so has added such-and-such to this channel. Its most important updates will show up here." This one isn't too important, so it doesn't matter when the message was sent.
+
+3. Send and delete a message in the dev server channel you want the bot to watch. Do this in a single `discord.Client()` session.
+
+4. Send and delete a message in a different dev server channel. Do this in a single `discord.Client()` session.
+
+Expected result:
+- Before and after deletion, the message isn't in MongoDB.
+- However, a delete function triggers and doesn't crash.
+
+
+
 ## Repo conventions
 
 Branch naming convention
