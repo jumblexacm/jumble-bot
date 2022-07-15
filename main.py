@@ -63,12 +63,12 @@ async def on_message(message):
             " Bot is not forwarding to MongoDB."
             f"   post_data: {post_data}")
 
-@discordClient.event
+@discord_client.event
 async def on_message_edit(before, after):
     # TODO Should this be on on_raw_message_edit()?
     raise Exception("Not yet implemented")
 
-@discordClient.event
+@discord_client.event
 async def on_message_delete(before, after):
     # TODO Should this be on_raw_message_delete?
     raise Exception("Not yet implemented")
