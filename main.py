@@ -24,7 +24,7 @@ async def on_ready():
 @discordClient.event
 async def on_message(message):
     if message.channel.id != int(BOT_CHANNEL_ID):
-        # print("Message sent in channel the bot mustn't forward posts from")
+        print("Message sent in channel the bot mustn't forward posts from")
         return
     
     attachment_urls = []
@@ -41,11 +41,11 @@ async def on_message(message):
     }
 
     if message.webhook_id:
-        # print(postData)
+        print(postData)
         postsCollection.insert_one(postData)
-    # else:
-    #     print(
-    #         "Message has no webhook ID, so not from a followed announcements channel."
-    #         " postData:\n{0}".format(postData))
+    else:
+        print(
+            "Message has no webhook ID, so not from a followed announcements channel."
+            " postData:\n{0}".format(postData))
 
 discordClient.run(DISCORD_TOKEN)
