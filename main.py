@@ -39,6 +39,11 @@ async def on_message(message):
         attachment_urls.append(attachment.url)
 
     postData = {
+        'org_id': message.author.id,
+            # TODO: `author.id` really identifies a specific followed
+            # channel, not a community server as a whole. If possible,
+            # access the Channel Follower Webhook's source guild.
+            # More here: https://discord.com/channels/992524047084687461/992524799060496576/997615364462624779
         'message_id': message.id,
         'message_author': message.author.display_name.rsplit('#', 1)[0],
         'author_avatar_url': str(message.author.avatar_url),
