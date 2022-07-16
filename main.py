@@ -80,6 +80,9 @@ async def on_message(message):
         return
     posts_collection.insert_one(post_data)
 
+# Note: An 'on_raw' function is called even if the message was
+# originally sent before this `discord.Client()`'s lifetime / during a
+# previous Heroku "session."
 @discord_client.event
 async def on_raw_message_edit(payload):
     message_id = payload.message_id
@@ -111,10 +114,6 @@ async def on_raw_message_edit(payload):
 
 @discord_client.event
 async def on_raw_message_delete(payload):
-    """Note: An 'on_raw' function is called even if the message was
-    originally sent before this `discord.Client()`'s lifetime / during
-    a previous Heroku "session." """
-    
     message_id = payload.message_id
     
     # Do NOT use `channel.fetch_message()`; it raises a
