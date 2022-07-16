@@ -30,8 +30,13 @@ posts_collection = db.Posts
 def get_post_data(message):
     attachment_urls = [attachment.url for attachment in message.attachments]
     return {
+        'org_id': message.author.id,
+            # TODO: `author.id` really identifies a specific followed
+            # channel, not a community server as a whole. If possible,
+            # access the Channel Follower Webhook's source guild.
+            # More here: https://discord.com/channels/992524047084687461/992524799060496576/997615364462624779
         'message_id': message.id,
-        'message_author': message.author.display_name.rsplit("#", 1)[0],
+        'message_author': message.author.display_name.rsplit(' #', 1)[0],
         'author_avatar_url': str(message.author.avatar_url),
         'date': message.created_at.strftime("%B %d, %Y"),
         'message_text': message.clean_content,
