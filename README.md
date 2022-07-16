@@ -161,6 +161,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     
     - OR run:
     
+          export $(grep -v '^#' .env | xargs) # Load environment variables
           python3 main.py
     
     - TODO Note that as far as [@kirmar](https://github.com/kirmar) can tell, `heroku local` doesn't output "We have logged in as..." or any other `print()`ed messages until you hit \<Ctrl+C>
