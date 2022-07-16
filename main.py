@@ -45,7 +45,7 @@ async def on_message(message):
             # access the Channel Follower Webhook's source guild.
             # More here: https://discord.com/channels/992524047084687461/992524799060496576/997615364462624779
         'message_id': message.id,
-        'message_author': message.author.display_name.rsplit('#', 1)[0],
+        'message_author': message.author.display_name.rsplit(' #', 1)[0],
         'author_avatar_url': str(message.author.avatar_url),
         'date': message.created_at.strftime('%B %d, %Y'),
         'message_text': message.clean_content,
