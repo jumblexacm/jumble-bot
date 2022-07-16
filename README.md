@@ -76,11 +76,10 @@ Notes about community servers:
 1. Create the Heroku app
 
 2. Connect the Heroku app to GitHub
-    - Click **"Deploy"**
+    - Click **"Deploy"** tab
     - Under **"Deployment method"**, connect the app to your GitHub account
     - Choose the repo where you store your Heroku app's code
-
-TODO Add any other steps/details that Cannon followed
+    - Select branch to deploy from. Default: main
 
 3. Gather secrets
     - Generate the [MongoDB URI](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
