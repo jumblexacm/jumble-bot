@@ -200,7 +200,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 
 ### Editing
 
-### Send and edit in a single `discord.Client()` session
+#### Send and edit in a single `discord.Client()` session
 
 1. Send
 2. Edit
@@ -213,7 +213,7 @@ Expected result:
 - After step 3, MongoDB has the new new message content
 - After step 4, the message isn't in MongoDB
 
-### Send in one session and edit in another
+#### Send in one session and edit in another
 
 Expected result:
 - Before editing, MongoDB has the original message content
@@ -238,7 +238,7 @@ Expected result:
 
 ### Deletion
 
-#### Send and delete in a single `discord.Client()` session:
+#### Send and delete in a single `discord.Client()` session
 
 1. "will delete": Delete from test community server
 
@@ -259,8 +259,8 @@ Expected result:
 3. "will manually delete next time"
 
 Expected result:
-- Before deletion, all three are in MongoDB.
-- After deletion, none are in MongoDB.
+- Before deletion, all three are in MongoDB
+- After deletion, none are in MongoDB
 
 #### Send when bot is offline and delete when online
 
@@ -269,8 +269,8 @@ Expected result:
 3. "will manually delete on start"
 
 Expected result:
-- Before and after deletion, none are in MongoDB.
-- However, a delete function triggers for each and doesn't crash.
+- Before and after deletion, none are in MongoDB
+- However, a delete function triggers for each and doesn't crash
 
 #### Delete non-announcement messages
 
@@ -278,13 +278,13 @@ Expected result:
 
 2. Delete a channel follow message: "so-and-so has added such-and-such to this channel. Its most important updates will show up here." This one isn't too important, so it doesn't matter when the message was sent.
 
-3. Send and delete a message in the dev server channel you want the bot to watch. Do this in a single `discord.Client()` session.
+3. Send and delete a message in the dev server channel you want the bot to watch. Again, do this in a single `discord.Client()` session.
 
-4. Send and delete a message in a different dev server channel. Do this in a single `discord.Client()` session.
+4. Send and delete a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
 
 Expected result:
-- Before and after deletion, the message isn't in MongoDB.
-- However, a delete function triggers and doesn't crash.
+- Before and after deletion, the message isn't in MongoDB
+- However, a delete function triggers and doesn't crash
 
 
 
