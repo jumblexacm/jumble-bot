@@ -158,9 +158,12 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     
           heroku local
           # TODO Should this be `heroku local worker=1`?
-
-2. Note that as far as [@kirmar](https://github.com/kirmar) can tell, the terminal doesn't output "We have logged in as..." until you \<Ctrl+C>
-    - TODO Is there a way to print everything immediately?
+    
+    - OR run:
+    
+          python3 main.py
+    
+    - TODO Note that as far as [@kirmar](https://github.com/kirmar) can tell, `heroku local` doesn't output "We have logged in as..." or any other `print()`ed messages until you hit \<Ctrl+C>
 
 3. Post and publish a message in your test community server
 
@@ -169,7 +172,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     - Next to Jumble, click **[Browse Collections]**
     - Scroll to the last query result
 
-5. When you're done testing, \<Ctrl+C>
+5. If using `heroku local`: When you're done testing, hit \<Ctrl+C> to see the logs
 
 
 ## STEP 6: Deploy to Heroku
