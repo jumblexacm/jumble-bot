@@ -84,13 +84,16 @@ async def on_message(message):
 async def on_raw_message_edit(payload):
     message_id = payload.message_id
     
-    # Do NOT use `payload.cached_message`; it's the unedited message.
+    # Do NOT use `payload.cached_message`; it's the unedited message
+    # and also is None if the message was sent before this
+    # `discord.Client()`'s lifetime.
     channel = discord_client.get_channel(payload.channel_id)
     message = await channel.fetch_message(message_id)
     
     post_data = get_post_data(message)
     
     if post_data['message_text'] == "[Original Message Deleted]":
+        # Really an edit, not a delete
         if payload.cached_message:
             message = payload.cached_message
             post_data = get_post_data(message)
@@ -98,6 +101,13 @@ async def on_raw_message_edit(payload):
             message, post_data, processing="deleting"):
             return
         posts_collection.delete_one({ 'message_id': message_id })
+    else:
+        # Really, truly an edit
+        if not from_followed_channel(message, post_data, processing="editing"):
+            return
+        posts_collection.update_one(
+            { 'message_id': message_id },
+            { '$set': post_data })
 
 @discord_client.event
 async def on_raw_message_delete(payload):

@@ -198,6 +198,44 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 ## Test cases
 
 
+### Editing
+
+### Send and edit in a single `discord.Client()` session
+
+1. Send
+2. Edit
+3. Edit again
+4. Edit to "[Original Message Deleted]"
+
+Expected result:
+- After step 1, MongoDB has the original message content
+- After step 2, MongoDB has the new message content
+- After step 3, MongoDB has the new new message content
+- After step 4, the message isn't in MongoDB
+
+### Send in one session and edit in another
+
+Expected result:
+- Before editing, MongoDB has the original message content
+- After editing, MongoDB has the new message content
+
+#### Send when bot is offline and edit when online
+
+Expected result:
+- Before and after editing, the message isn't in MongoDB
+- However, the edit function triggers and doesn't crash
+
+#### Edit non-announcement messages
+
+1. Send and edit a message in the dev server channel you want the bot to watch. Do this in a single `discord.Client()` session so you're not just testing the "try to delete no matter what" `payload.cached_message`.
+
+2. Send and edit a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
+
+Expected result:
+- Before and after editing, none are in MongoDB
+- However, the edit function triggers for each and doesn't crash
+
+
 ### Deletion
 
 #### Send and delete in a single `discord.Client()` session:
