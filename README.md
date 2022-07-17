@@ -216,6 +216,16 @@ Expected result:
 - After step 3, MongoDB has the new new message content
 - After step 4, the message isn't in MongoDB
 
+#### Send and edit attachments (in a single session)
+
+1. Send with attachment
+2. Remove the attachment
+
+Expected result:
+- Before and after editing, MongoDB has the attachment
+- The edit function doesn't trigger at all and the bot doesn't crash
+- However, maybe someday it'll work, and we don't want the bot crashing :)
+
 #### Send in one session and edit in another
 
 Expected result:
