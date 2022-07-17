@@ -76,7 +76,7 @@ Notes about community servers:
 1. Create the Heroku app
 
 2. Connect the Heroku app to GitHub
-    - Click **"Deploy"** tab
+    - In the Heroku Dashboard, click the **"Deploy"** tab
     - Under **"Deployment method"**, connect the app to your GitHub account
     - Choose the repo where you store your Heroku app's code
     - Select branch to deploy from. Default: main
@@ -99,7 +99,7 @@ Notes about community servers:
 Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
 4. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
-    - In the Heroku Dashboard, click **"Settings"**
+    - In the Heroku Dashboard, click the **"Settings"** tab
     - Under **"Config Vars"**, click **[Reveal Config Vars]**
     - Add the first config var:
         - KEY: `MONGODB_URI`
