@@ -49,11 +49,11 @@ https://discord.com/developers/docs/intro
 
 5. Activate the bot
     - Use the generated URL to invite the bot to your dev server
-    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to
+    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to. (This is also prevented by `BOT_CHANNEL_ID` in `main.py`, but just in case.)
     - Under the channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
 
 
-## STEP 2: Create a test student org server
+## STEP 2: Create a test community server
 
 1. In Discord, click **[Add a Server]** and follow the steps
 
