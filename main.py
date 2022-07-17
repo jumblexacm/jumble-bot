@@ -101,7 +101,7 @@ async def on_raw_message_edit(payload):
     post_data = get_post_data(message)
     
     if post_data['message_text'] == "[Original Message Deleted]":
-        # Really an edit, not a delete
+        # Really a delete, not an edit
         if payload.cached_message:
             message = payload.cached_message
             post_data = get_post_data(message)
