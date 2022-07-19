@@ -49,11 +49,11 @@ https://discord.com/developers/docs/intro
 
 5. Activate the bot
     - Use the generated URL to invite the bot to your dev server
-    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to
+    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to. (This is also prevented by `BOT_CHANNEL_ID` in `main.py`, but just in case.)
     - Under the channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
 
 
-## STEP 2: Create a test student org server
+## STEP 2: Create a test community server
 
 1. In Discord, click **[Add a Server]** and follow the steps
 
@@ -76,11 +76,10 @@ Notes about community servers:
 1. Create the Heroku app
 
 2. Connect the Heroku app to GitHub
-    - Click **"Deploy"**
+    - In the Heroku Dashboard, click the **"Deploy"** tab
     - Under **"Deployment method"**, connect the app to your GitHub account
     - Choose the repo where you store your Heroku app's code
-
-TODO Add any other steps/details that Cannon followed
+    - Select branch to deploy from. Default: main
 
 3. Gather secrets
     - Generate the [MongoDB URI](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
@@ -100,7 +99,7 @@ TODO Add any other steps/details that Cannon followed
 Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
 4. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
-    - In the Heroku Dashboard, click **"Settings"**
+    - In the Heroku Dashboard, click the **"Settings"** tab
     - Under **"Config Vars"**, click **[Reveal Config Vars]**
     - Add the first config var:
         - KEY: `MONGODB_URI`
@@ -197,6 +196,109 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     - In your terminal, run:
     
           heroku logs --tail -a $HEROKU_APP_NAME
+
+
+## Test cases
+
+
+### Editing
+
+#### Send and edit in a single `discord.Client()` session
+
+1. Send
+2. Edit
+3. Edit again
+4. Edit to "[Original Message Deleted]"
+
+Expected result:
+- After step 1, MongoDB has the original message content
+- After step 2, MongoDB has the new message content
+- After step 3, MongoDB has the new new message content
+- After step 4, the message isn't in MongoDB
+
+#### Send and edit attachments (in a single session)
+
+1. Send with attachment
+2. Remove the attachment
+
+Expected result:
+- Before and after editing, MongoDB has the attachment
+- The edit function doesn't trigger at all and the bot doesn't crash
+- However, maybe someday it'll work, and we don't want the bot crashing :)
+
+#### Send in one session and edit in another
+
+Expected result:
+- Before editing, MongoDB has the original message content
+- After editing, MongoDB has the new message content
+
+#### Send when bot is offline and edit when online
+
+Expected result:
+- Before and after editing, the message isn't in MongoDB
+- However, the edit function triggers and doesn't crash
+
+#### Edit non-announcement messages
+
+1. Send and edit a message in the dev server channel you want the bot to watch. Do this in a single `discord.Client()` session so you're not just testing the "try to delete no matter what" `payload.cached_message`.
+
+2. Send and edit a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
+
+Expected result:
+- Before and after editing, none are in MongoDB
+- However, the edit function triggers for each and doesn't crash
+
+
+### Deletion
+
+#### Send and delete in a single `discord.Client()` session
+
+1. "will delete": Delete from test community server
+
+2. "will fake delete": Edit in test community server to say "[Original Message Deleted]"
+
+3. "will manually delete": Delete manually in dev server
+
+The suggested message text here is to give you less to think about as you test and to help identify the entries in MongoDB :)
+
+Expected result:
+- Before deletion, all three are in MongoDB
+- After deletion, none are in MongoDB
+
+#### Send in one session and delete in another
+
+1. "will delete next time"
+2. "will fake delete next time"
+3. "will manually delete next time"
+
+Expected result:
+- Before deletion, all three are in MongoDB
+- After deletion, none are in MongoDB
+
+#### Send when bot is offline and delete when online
+
+1. "will delete on start"
+2. "will fake delete on start"
+3. "will manually delete on start"
+
+Expected result:
+- Before and after deletion, none are in MongoDB
+- However, a delete function triggers for each and doesn't crash
+
+#### Delete non-announcement messages
+
+1. Delete a welcome message: "Welcome, so-and-so. We hope you brought pizza." This one isn't too important, so it doesn't matter when the message was sent.
+
+2. Delete a channel follow message: "so-and-so has added such-and-such to this channel. Its most important updates will show up here." This one isn't too important, so it doesn't matter when the message was sent.
+
+3. Send and delete a message in the dev server channel you want the bot to watch. Again, do this in a single `discord.Client()` session.
+
+4. Send and delete a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
+
+Expected result:
+- Before and after deletion, the message isn't in MongoDB
+- However, a delete function triggers and doesn't crash
+
 
 
 ## Repo conventions
