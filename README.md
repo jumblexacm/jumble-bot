@@ -7,7 +7,11 @@
 
 - Discord server (your "dev server")
 
-- AWS account
+- MongoDB Atlas database
+
+- Heroku account and Heroku CLI
+
+- Python 3 (with `pip`)
 
 
 ## STEP 1: Create the Discord bot
@@ -41,10 +45,15 @@ https://discord.com/developers/docs/intro
         - Under **"Scopes"**, check `bot`
         - Under **"Bot Permissions"**, check `Read Messages/View Channels`
     - As your redirect URL, choose your redirect URI from earlier
-    - Copy the generated URL, because it disappears if you navigate away from the page. This URL lets you add the bot to a server, for now your dev server.
+    - Save the generated URL, because it disappears if you navigate away from the page
+
+5. Activate the bot
+    - Use the generated URL to invite the bot to your dev server
+    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to. (This is also prevented by `BOT_CHANNEL_ID` in `main.py`, but just in case.)
+    - Under the channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
 
 
-## STEP 2: Create a test student org server
+## STEP 2: Create a test community server
 
 1. In Discord, click **[Add a Server]** and follow the steps
 
@@ -54,147 +63,242 @@ https://discord.com/developers/docs/intro
 
 4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot
 
+5. Consider creating another Discord app/bot, student org server, and dev server as your dev environment.
+
 Notes about community servers:
-- For a message to appear in the dev server, the person posting in the student org server must send the message *and* click "Publish."
-- When someone edits the message in the student org server, it also updates in the dev server.
+- For a message to appear in the dev server, you must post in the announcements channel *and* click "Publish."
+- When you publish, Discord may say, "You've reached your 10 published mesages per-hour limit. But we love the enthusiasm, so please try again in X minutes." Create an additional announcements channel, follow it from your dev server, and post in the new announcements channel for a while.
+- When you edit the message in the student org server, it also updates in the dev server.
 
 
-## STEP 3: Create the admin IAM role and first user
+## STEP 3: Set up the Heroku app
 
-https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html
+1. Create the Heroku app
 
-1. After signing in as the root user in your AWS account, create an IAM [admin role](https://alestic.com/2014/09/aws-root-password/)
-    - In the Identity and Access Management (IAM) console, click **"Roles"** and **[Create role]**
-    - Trusted entity type: `AWS account`
-    - An AWS account: `This account`
-    - Options: `Require MFA`
-    - Add permissions: `AdministratorAccess` (just that; not the one for Amplify or Elastic Beanstalk)
-    - Role name: `admin`
-    - After creating the role, open its role summary to copy/save both its ARN and its "switch roles" link somewhere safe
+2. Connect the Heroku app to GitHub
+    - In the Heroku Dashboard, click the **"Deploy"** tab
+    - Under **"Deployment method"**, connect the app to your GitHub account
+    - Choose the repo where you store your Heroku app's code
+    - Select branch to deploy from. Default: main
 
-2. Create an IAM "assume admin role" [permissions policy](https://docs.aws.amazon.com/lambda/latest/dg/security_iam_id-based-policy-examples.html)
-    - In the IAM console, click **"Policies"** and **[Create policy]**
-    - Add "assume admin role" permission
-        - Service: `STS`
-        - Actions:
-            - `Write` > `AssumeRole`
-        - Resources: `Specific`
-            - **"Add ARN"**
-            - Paste the ARN from `admin`'s role summary
-        - Request conditions: `MFA required`
-    - Name: `jumble-assume-admin-policy`
+3. Gather secrets
+    - Generate the [MongoDB URI](https://www.mongodb.com/docs/manual/reference/connection-string/#dns-seed-list-connection-format)
+        - In MongoDB Atlas, click **"Database"** to open the Database Deployments page
+        - Next to Jumble, click **[Connect]**
+        - Click **[Connect Your Application]**
+        - Copy the generated MongoDB URI, replace `<password>` with the password for the specified user, and save it somewhere secure
+    - Generate the Discord bot token
+        - Open your Discord app in the Discord Developer Portal
+        - Menu section: **"Bot"**
+        - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere secure
+    - Find the Discord channel ID for the bot to watch
+        - Open your dev server
+        - Open the channel you want the bot to watch
+        - In the URL, save the second number
 
-3. Create the IAM [users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html#id_which-to-choose)
-    - In the IAM console, click **"Users"** and **[Add users]**
-    - User name: *[Input your name]*
-        - Example: `kira`
-    - For each other engineer who needs access to your AWS resources (like your Lambda function), **[Add another user]**
-    <!--- - Select AWS credential type: `Access key - Programmatic access` -->
-    - Select AWS access type
-        - Select AWS credential type: `Password - AWS Management Console access`
-        - Console password: `Autogenerated password`
-        - Require password reset: `Users must create a new password at next sign-in`
-    - Attach existing policies directly: `jumble-assume-admin-policy`
-    - After creating the user(s), save the credentials immediately to a safe place, because they disappear forever if you navigate away from the page
+Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
-4. Set up MFA
-    - In the IAM console, click **"Users"** and choose your IAM user
-    - Click **"Security credentials"**
-    - Assigned MFA device: `Manage`
-    - Set up your MFA of choice
-    - Note: If you don't set up MFA, trying to assume the admin role might give you this error: "Invalid information in one or more fields."
+4. Store secrets as [config vars](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard), like environment variables
+    - In the Heroku Dashboard, click the **"Settings"** tab
+    - Under **"Config Vars"**, click **[Reveal Config Vars]**
+    - Add the first config var:
+        - KEY: `MONGODB_URI`
+        - VALUE: *[Input the MongoDB URI]*
+    - Add the second config var:
+        - KEY: `DISCORD_TOKEN`
+        - VALUE: *[Input the Discord bot token]*
+    - Add the third config var:
+        - KEY: `BOT_CHANNEL_ID`
+        - VALUE: *[Input the Discord channel ID]*
 
-5. Assume the `admin` role
-    - Sign out of the AWS account
-    - Sign in as your IAM user
-    - Visit the "switch roles" link from `admin`'s role summary
-    - Display Name: *[Input anything you'd like that helps you remember what this role is]*
+5. Let Heroku access MongoDB
+    - In MongoDB Atlas, click **"Network Access"**
+    - Click **[Add IP address]**
+    - Access List Entry: `0.0.0.0/0`
+    - Comment: `All IP addresses so Heroku can access MongoDB`
+    - Note: If you're uncomfortable allowing all IP addresses, a Heroku [add-on](https://www.mongodb.com/developer/products/atlas/use-atlas-on-heroku/#configuring-heroku-ip-addresses-in-mongodb-atlas) can create a static IP address. As far as [@kirmar] can tell, without [one of these solutions](https://www.mongodb.com/community/forums/t/connect-atlas-to-heroku-hosted-app/7202), the Heroko app doesn't work and Heroku logs a `ServerSelectionTimeoutError` when it tries to access the MongoDB database.
 
-6. From now on, assume the `admin` role any time you need full permissions, instead of using the root user directly
+6. Set your `$HEROKU_APP_NAME` environment variable
+    - In your terminal, run:
+          
+          HEROKU_APP_NAME=*<the name of your Heroku app as displayed in the Heroku Dashboard>*
+          echo $HEROKU_APP_NAME # Confirm it's set to the correct name
 
-7. Recommended: To make the sign-in URL simpler for IAM users and something that isn't a secret, create an [account alias](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#CreateAccountAlias)
-    - In the IAM console, click **"Dashboard"**
-    - Under **"AWS Account"** > **"Account Alias"**, click **[Create]** and choose a unique alias with no private information
-
-
-## STEP 4: Create the engineer IAM role
-
-1. Still assuming the `admin` role, create an IAM policy for managing Lambda
-    - In the IAM console, click **"Policies"** and **[Create policy]**
-    - Add Lambda function create/view/edit permissions
-        - Service: `Lambda`
-        - Actions:
-            - `List`
-                - `ListFunctions` (to view the list of all functions in the Lambda console)
-                - `ListFunctionUrlConfigs` (to view a function URL)
-            - `Read`
-                - `GetAccountSettings` (to view the list of all functions in the Lambda console)
-                - `GetFunction` (to view a function's code, logs, and settings)
-            - `Write`
-                - `CreateFunction` (to create a function)
-                - `CreateFunctionUrlConfig` (to create a function URL)
-            - `Permissions management`
-                - `AddPermission` (to create a function URL)
-        - Resources: `All resources`
-        - Request conditions: `MFA required`
-    - Add additional permissions
-        - Service: `IAM`
-        - Actions:
-            - `Write`
-                - `CreateRole` (to create a function)
-                - `PassRole` (to create a function)
-            - `Permissions management`
-                - `AttachRolePolicy` (to create a function)
-                - `CreatePolicy` (to create a function)
-        - Resources: `All resources`
-        - Request conditions: `MFA required`
-    - Name: `jumble-lambda-policy`
-
-2. Create an IAM engineer role
-    - As earlier with `admin`, choose this account and require MFA
-    - However, add `jumble-lambda-policy` (not the "assume admin role" policy)
-    - And name the role `engineer`
-    - After creating the role, open its role summary to copy its ARN
-
-3. Create an IAM "assume engineer role" policy
-    - As earlier with `jumble-assume-admin-policy`, choose `STS` > `Write` > `AssumeRole`
-    - However, for the resource, paste the ARN from the `engineer` role summary (not the admin role's summary)
-    - Request conditions: `MFA required`
-    - Name: `jumble-assume-engineer-policy`
-
-4. Add `jumble-assume-engineer-policy` to each user (including the first IAM user from earlier)
-    - For each user:
-        - In the IAM console, click **"Users"** and choose the IAM user
-        - Click **"Add permissions"**
-        - Attach existing policies directly: `jumble-assume-engineer-policy`
-    - At the end, each user has `jumble-assume-admin-policy` and `jumble-assume-engineer-policy` (and the automatically-attached `IAMUserChangePassword`)
-
-5. Work with each user to set up their MFA
-
-6. Send each user's credentials securely to the user
+7. Deploy the Heroku app for the first time
+    - Follow [step 6](#step-6-deploy-to-heroku)
+    - After this very first deployment, [scale the number of worker dynos](https://devcenter.heroku.com/articles/background-jobs-queueing#process-model)
+        - In your terminal, run:
+              
+              heroku ps:scale worker=1 -a $HEROKU_APP_NAME
 
 
-## STEP 6: Set up the Lambda function
+## STEP 4: Set up your Heroku CLI and local environment
 
-1. Assuming the `engineer` role, create the function
-    - In the Lambda console, click **"Dashboard"** and **[Create function]**
-    - Check `Author from scratch`
-    - Function name: `jumble-bot-function`
-    - Execution role: `Create a new role with basic Lambda permissions`
-        - Note: If you ever delete the Lambda function, be sure to delete the role it created too
-    - Create a URL
-        - Under **"Advanced settings"**, check `Enable function URL`
-        - Auth type: `NONE` (We'll authenticate within the Lambda function)
+1. Store secrets in `.env`
+    - In your terminal, run:
+          
+          heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
+          heroku config:get BOT_CHANNEL_ID -s -a $HEROKU_APP_NAME >> .env
+    
+    - Then set `DISCORD_TOKEN` to your dev environment Discord bot's token OR run:
+          
+          heroku config:get DISCORD_TOKEN -s -a $HEROKU_APP_NAME >> .env
 
-2. Get the function URL
-    - In `jumble-bot-function`'s function overview, copy the function URL
+2. Install dependencies
+    - In your terminal, run:
+    
+          python3 -m pip install --target=lib/ -r requirements.txt
 
 
-## Resources
+## STEP 5: Test the app on your local machine
 
-https://discord.com/developers/docs/resources/channel#get-channel-messages
+1. Start the app
+    - In your terminal, run:
+    
+          heroku local
+          # TODO Should this be `heroku local worker=1`?
+    
+    - OR run:
+    
+          export $(grep -v '^#' .env | xargs) # Load environment variables
+          python3 main.py
+    
+    - TODO Note that as far as [@kirmar](https://github.com/kirmar) can tell, `heroku local` doesn't output "We have logged in as..." or any other `print()`ed messages until you hit \<Ctrl+C>
 
-https://github.com/kkrypt0nn/Python-Discord-Bot-Template
+3. Post and publish a message in your test community server
+
+4. See the new document in MongoDB :)
+    - In MongoDB Atlas, click **"Database"** to open the Database Deployments page
+    - Next to Jumble, click **[Browse Collections]**
+    - Scroll to the last query result
+
+5. If using `heroku local`: When you're done testing, hit \<Ctrl+C> to see the logs
+
+
+## STEP 6: Deploy to Heroku
+
+<!-- Note: As of 2022-07-14, another step links to this one, so be careful changing the title or step number -->
+
+1. In your terminal, `git push` your branch
+
+2. In the Heroku Dashboard, under **"Manual deploy"**, choose your current branch
+
+3. Click **[Deploy Branch]**
+
+
+## STEP 7: Test the app
+
+1. Post and publish a message in your test community server
+
+2. See the new document in MongoDB :)
+
+3. View your Heroku logs
+    - In your terminal, run:
+    
+          heroku logs --tail -a $HEROKU_APP_NAME
+
+
+## Test cases
+
+
+### Editing
+
+#### Send and edit in a single `discord.Client()` session
+
+1. Send
+2. Edit
+3. Edit again
+4. Edit to "[Original Message Deleted]"
+
+Expected result:
+- After step 1, MongoDB has the original message content
+- After step 2, MongoDB has the new message content
+- After step 3, MongoDB has the new new message content
+- After step 4, the message isn't in MongoDB
+
+#### Send and edit attachments (in a single session)
+
+1. Send with attachment
+2. Remove the attachment
+
+Expected result:
+- Before and after editing, MongoDB has the attachment
+- The edit function doesn't trigger at all and the bot doesn't crash
+- However, maybe someday it'll work, and we don't want the bot crashing :)
+
+#### Send in one session and edit in another
+
+Expected result:
+- Before editing, MongoDB has the original message content
+- After editing, MongoDB has the new message content
+
+#### Send when bot is offline and edit when online
+
+Expected result:
+- Before and after editing, the message isn't in MongoDB
+- However, the edit function triggers and doesn't crash
+
+#### Edit non-announcement messages
+
+1. Send and edit a message in the dev server channel you want the bot to watch. Do this in a single `discord.Client()` session so you're not just testing the "try to delete no matter what" `payload.cached_message`.
+
+2. Send and edit a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
+
+Expected result:
+- Before and after editing, none are in MongoDB
+- However, the edit function triggers for each and doesn't crash
+
+
+### Deletion
+
+#### Send and delete in a single `discord.Client()` session
+
+1. "will delete": Delete from test community server
+
+2. "will fake delete": Edit in test community server to say "[Original Message Deleted]"
+
+3. "will manually delete": Delete manually in dev server
+
+The suggested message text here is to give you less to think about as you test and to help identify the entries in MongoDB :)
+
+Expected result:
+- Before deletion, all three are in MongoDB
+- After deletion, none are in MongoDB
+
+#### Send in one session and delete in another
+
+1. "will delete next time"
+2. "will fake delete next time"
+3. "will manually delete next time"
+
+Expected result:
+- Before deletion, all three are in MongoDB
+- After deletion, none are in MongoDB
+
+#### Send when bot is offline and delete when online
+
+1. "will delete on start"
+2. "will fake delete on start"
+3. "will manually delete on start"
+
+Expected result:
+- Before and after deletion, none are in MongoDB
+- However, a delete function triggers for each and doesn't crash
+
+#### Delete non-announcement messages
+
+1. Delete a welcome message: "Welcome, so-and-so. We hope you brought pizza." This one isn't too important, so it doesn't matter when the message was sent.
+
+2. Delete a channel follow message: "so-and-so has added such-and-such to this channel. Its most important updates will show up here." This one isn't too important, so it doesn't matter when the message was sent.
+
+3. Send and delete a message in the dev server channel you want the bot to watch. Again, do this in a single `discord.Client()` session.
+
+4. Send and delete a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
+
+Expected result:
+- Before and after deletion, the message isn't in MongoDB
+- However, a delete function triggers and doesn't crash
+
 
 
 ## Repo conventions
