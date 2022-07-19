@@ -44,6 +44,7 @@ https://discord.com/developers/docs/intro
     - Choose [permissions](https://discord.com/developers/docs/topics/oauth2#oauth2):
         - Under **"Scopes"**, check `bot`
         - Under **"Bot Permissions"**, check `Read Messages/View Channels`
+    - As your redirect URL, choose your redirect URI from earlier
     - Save the generated URL, because it disappears if you navigate away from the page
 
 5. Activate the bot
@@ -134,9 +135,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 ## STEP 4: Set up your Heroku CLI and local environment
 
 1. Store secrets in `.env`
-    - In your terminal, clone this repo and `cd` into its root directory
-    
-    - Run:
+    - In your terminal, run:
           
           heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
           heroku config:get BOT_CHANNEL_ID -s -a $HEROKU_APP_NAME >> .env
