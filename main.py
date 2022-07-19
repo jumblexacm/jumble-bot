@@ -30,7 +30,8 @@ posts_collection = db.Posts
 def get_post_data(message):
     attachment_urls = [attachment.url for attachment in message.attachments]
     return {
-        'org_id': message.author.id,
+        'org_id': str(message.author.id),
+            # Without `str()`, `org_id` is too large for a JavaScript int
             # TODO: `author.id` really identifies a specific followed
             # channel, not a community server as a whole. If possible,
             # access the Channel Follower Webhook's source guild.
