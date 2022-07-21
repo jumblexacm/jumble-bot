@@ -9,6 +9,8 @@ try:
     # Import config vars on Heroku
     DISCORD_TOKEN = process.env.DISCORD_TOKEN
     MONGODB_URI = process.env.MONGODB_URI
+    MONGODB_DB = process.env.MONGODB_DB
+    BOT_CHANNEL_ID = process.env.BOT_CHANNEL_ID
 except NameError as e:
     if str(e) != "name 'process' is not defined":
         raise
@@ -16,6 +18,7 @@ except NameError as e:
         # Import environment vars from .env on local machine
         DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
         MONGODB_URI = os.environ['MONGODB_URI']
+        MONGODB_DB = os.environ['MONGODB_DB']
         BOT_CHANNEL_ID = os.environ['BOT_CHANNEL_ID']
     except KeyError:
         print(f"os.environ keys: {sorted(list(os.environ.keys()))}")
@@ -24,7 +27,7 @@ except NameError as e:
 discord_client = discord.Client()
 mongo_client = MongoClient(MONGODB_URI)
 
-db = mongo_client.JumbleDB
+db = mongo_client[MONGODB_DB]
 posts_collection = db.Posts
 
 def get_post_data(message):
@@ -82,7 +85,8 @@ async def on_ready():
 @discord_client.event
 async def on_message(message):
     post_data = get_post_data(message)
-    if not from_followed_channel(message, post_data, processing="forwarding"):
+    if not from_followed_channel(
+        message, post_data, processing=f"forwarding (to `{MONGODB_DB}`)"):
         return
     posts_collection.insert_one(post_data)
 
