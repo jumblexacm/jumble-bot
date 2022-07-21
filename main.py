@@ -29,6 +29,7 @@ mongo_client = MongoClient(MONGODB_URI)
 
 db = mongo_client[MONGODB_DB]
 posts_collection = db.Posts
+orgs_collection = db.Orgs
 
 def get_post_data(message):
     attachment_urls = [attachment.url for attachment in message.attachments]
@@ -46,6 +47,16 @@ def get_post_data(message):
         'message_text': message.clean_content,
         'attachment_urls': attachment_urls,
     }
+
+def get_org_data(post_data, most_recent_post_date):
+    org_id = post_data['org_id']
+    org_data = {
+        'org_id': org_id,
+        'org_name': post_data['message_author'],
+        'org_avatar_url': post_data['author_avatar_url'],
+        'recency': most_recent_post_date
+    }
+    return (org_id, org_data)
 
 def in_correct_channel(message):
     """Verify message is from bot's assigned "to-watch" channel."""
@@ -89,6 +100,13 @@ async def on_message(message):
         message, post_data, processing=f"forwarding (to `{MONGODB_DB}`)"):
         return
     posts_collection.insert_one(post_data)
+    most_recent_post_date = message.created_at
+    org_id, org_data = get_org_data(post_data, most_recent_post_date)
+    updated_org = orgs_collection.find_one_and_update(
+        { 'org_id': org_id },
+        { '$set': { 'recency': most_recent_post_date } })
+    if not updated_org:
+        orgs_collection.insert_one(org_data)
 
 # Note: An 'on_raw' function is called even if the message was
 # originally sent before this `discord.Client()`'s lifetime / during a
