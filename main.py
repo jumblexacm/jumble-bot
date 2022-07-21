@@ -53,8 +53,8 @@ def get_org_data(post_data, most_recent_post_date):
     org_data = {
         'org_id': org_id,
         'org_name': post_data['message_author'],
-        'org_pic': post_data['author_avatar_url'],
-        'most_recent_post_date': most_recent_post_date
+        'org_avatar_url': post_data['author_avatar_url'],
+        'recency': most_recent_post_date
     }
     return (org_id, org_data)
 
@@ -104,7 +104,7 @@ async def on_message(message):
     org_id, org_data = get_org_data(post_data, most_recent_post_date)
     updated_org = orgs_collection.find_one_and_update(
         { 'org_id': org_id },
-        { '$set': { 'most_recent_post_date': most_recent_post_date } })
+        { '$set': { 'recency': most_recent_post_date } })
     if not updated_org:
         orgs_collection.insert_one(org_data)
 
