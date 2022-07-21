@@ -10,6 +10,7 @@
 - MongoDB Atlas database
 
 - Heroku account and Heroku CLI
+    - https://devcenter.heroku.com/articles/heroku-cli
 
 - Python 3 (with `pip`)
 
