@@ -10,7 +10,7 @@ try:
     DISCORD_TOKEN = process.env.DISCORD_TOKEN
     MONGODB_URI = process.env.MONGODB_URI
     MONGODB_DB = process.env.MONGODB_DB
-    BOT_CHANNEL_ID = process.env.BOT_CHANNEL_ID
+    BOT_CHANNEL_IDS = process.env.BOT_CHANNEL_IDS
 except NameError as e:
     if str(e) != "name 'process' is not defined":
         raise
@@ -19,7 +19,7 @@ except NameError as e:
         DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
         MONGODB_URI = os.environ['MONGODB_URI']
         MONGODB_DB = os.environ['MONGODB_DB']
-        BOT_CHANNEL_ID = os.environ['BOT_CHANNEL_ID']
+        BOT_CHANNEL_IDS = os.environ['BOT_CHANNEL_IDS']
     except KeyError:
         print(f"os.environ keys: {sorted(list(os.environ.keys()))}")
         raise
@@ -48,8 +48,8 @@ def get_post_data(message):
     }
 
 def in_correct_channel(message):
-    """Verify message is from bot's assigned "to-watch" channel."""
-    if message.channel.id != int(BOT_CHANNEL_ID):
+    """Verify message is from bot's assigned "to-watch" channels."""
+    if str(message.channel.id) not in BOT_CHANNEL_IDS.split(","):
         print("Message from a channel that bot isn't assigned to watch.")
         return False
     return True
