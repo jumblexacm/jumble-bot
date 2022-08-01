@@ -4,6 +4,8 @@ import sys
 sys.path.append('lib/')
 import discord
 from pymongo import MongoClient
+import requests
+from algoliasearch.search_client import SearchClient
 
 try:
     # Import config vars on Heroku
@@ -11,6 +13,8 @@ try:
     MONGODB_URI = process.env.MONGODB_URI
     MONGODB_DB = process.env.MONGODB_DB
     BOT_CHANNEL_ID = process.env.BOT_CHANNEL_ID
+    ALGOLIA_ID = process.env.ALGOLIA_ID
+    ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_KEY
 except NameError as e:
     if str(e) != "name 'process' is not defined":
         raise
@@ -20,16 +24,21 @@ except NameError as e:
         MONGODB_URI = os.environ['MONGODB_URI']
         MONGODB_DB = os.environ['MONGODB_DB']
         BOT_CHANNEL_ID = os.environ['BOT_CHANNEL_ID']
+        ALGOLIA_ID = os.environ['ALGOLIA_ID']
+        ALGOLIA_ADMIN_KEY = os.environ['ALGOLIA_ADMIN_KEY']
     except KeyError:
         print(f"os.environ keys: {sorted(list(os.environ.keys()))}")
         raise
 
 discord_client = discord.Client()
-mongo_client = MongoClient(MONGODB_URI)
 
+mongo_client = MongoClient(MONGODB_URI)
 db = mongo_client[MONGODB_DB]
 posts_collection = db.Posts
 orgs_collection = db.Orgs
+
+algolia_client = SearchClient.create(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
+algolia_index = algolia_client.init_index('posts')
 
 def get_post_data(message):
     attachment_urls = [attachment.url for attachment in message.attachments]
@@ -100,6 +109,9 @@ async def on_message(message):
         message, post_data, processing=f"forwarding (to `{MONGODB_DB}`)"):
         return
     posts_collection.insert_one(post_data)
+    algolia_index.save_object(
+        post_data, # Note: MongoDB seems to add its `_id` to `post_data`
+        { 'autoGenerateObjectIDIfNotExist': True })
     most_recent_post_date = message.created_at
     org_id, org_data = get_org_data(post_data, most_recent_post_date)
     updated_org = orgs_collection.find_one_and_update(

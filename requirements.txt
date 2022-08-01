@@ -1,2 +1,3 @@
 discord.py==1.7.3
 pymongo[srv]==4.1.1
+algoliasearch==2.6.2

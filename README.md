@@ -9,6 +9,8 @@
 
 - MongoDB Atlas database
 
+- Algolia app
+
 - Heroku account and Heroku CLI
     - https://devcenter.heroku.com/articles/heroku-cli
 
@@ -99,6 +101,10 @@ Notes about community servers:
         - Open your dev server
         - Open the channel you want the bot to watch
         - In the URL, save the second number
+    - Find the Algolia app's API keys
+        - Open your Algolia app's dashboard
+        - Below the welcome message, click **"API Keys"**
+        - Copy the application ID and admin API key to a safe place
 
 Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
@@ -117,6 +123,12 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
     - Add the fourth config var:
         - KEY: `BOT_CHANNEL_ID`
         - VALUE: *[Input the Discord channel ID]*
+    - Add the fifth config var:
+        - KEY: ALGOLIA_ID
+        - VALUE: *[Input the Algolia app's application ID]*
+    - Add the sixth config var:
+        - KEY: ALGOLIA_ADMIN_KEY
+        - VALUE: *[Input the Algolia app's admin API key]*
 
 5. Let Heroku access MongoDB
     - In MongoDB Atlas, click **"Network Access"**
@@ -150,6 +162,8 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
           heroku config:get MONGODB_DB -s -a $HEROKU_APP_NAME >> .env
           heroku config:get BOT_CHANNEL_ID -s -a $HEROKU_APP_NAME >> .env
           heroku config:get DISCORD_TOKEN -s -a $HEROKU_APP_NAME >> .env
+          heroku config:get ALGOLIA_ID -s -a $HEROKU_APP_NAME >> .env
+          heroku config:get ALGOLIA_ADMIN_KEY -s -a $HEROKU_APP_NAME >> .env
 
 2. Install dependencies
     - In your terminal, run:
