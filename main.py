@@ -146,7 +146,11 @@ async def on_raw_message_edit(payload):
         if not from_followed_channel(
             message, post_data, processing="deleting"):
             return
+        algolia_object_id = (
+            posts_collection.find_one({ 'message_id': message_id })['_id'])
         posts_collection.delete_one({ 'message_id': message_id })
+        algolia_index.delete_object(algolia_object_id)
+            # TODO Don't store MongoDB `_id` in Algolia
     else:
         # Really, truly an edit
         if not from_followed_channel(message, post_data, processing="editing"):
@@ -184,6 +188,10 @@ async def on_raw_message_delete(payload):
             "\n   Bot is attempting to delete message."
             f"   message_id: {message_id}")
     
+    algolia_object_id = (
+        posts_collection.find_one({ 'message_id': message_id })['_id'])
     posts_collection.delete_one({ 'message_id': message_id })
+    algolia_index.delete_object(algolia_object_id)
+        # TODO Don't store MongoDB `_id` in Algolia
 
 discord_client.run(DISCORD_TOKEN)
