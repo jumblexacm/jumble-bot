@@ -110,8 +110,6 @@ async def on_message(message):
         return
     posts_collection.insert_one(post_data)
     post_data['objectID'] = post_data['_id']
-        # TODO Don't store MongoDB `_id` in Algolia
-        # TODO Don't store Discord message ID or other info in Algolia
     algolia_index.save_object(
         post_data, # Note: MongoDB seems to add its `_id` to `post_data`
         { 'autoGenerateObjectIDIfNotExist': True })
@@ -150,7 +148,6 @@ async def on_raw_message_edit(payload):
             posts_collection.find_one({ 'message_id': message_id })['_id'])
         posts_collection.delete_one({ 'message_id': message_id })
         algolia_index.delete_object(algolia_object_id)
-            # TODO Don't store MongoDB `_id` in Algolia
     else:
         # Really, truly an edit
         if not from_followed_channel(message, post_data, processing="editing"):
@@ -160,7 +157,6 @@ async def on_raw_message_edit(payload):
             { '$set': post_data })
         post_data = posts_collection.find_one({ 'message_id': message_id })
         post_data['objectID'] = post_data['_id']
-            # TODO Don't store MongoDB `_id` in Algolia
         algolia_index.save_object(post_data)
 
 @discord_client.event
@@ -192,6 +188,5 @@ async def on_raw_message_delete(payload):
         posts_collection.find_one({ 'message_id': message_id })['_id'])
     posts_collection.delete_one({ 'message_id': message_id })
     algolia_index.delete_object(algolia_object_id)
-        # TODO Don't store MongoDB `_id` in Algolia
 
 discord_client.run(DISCORD_TOKEN)
