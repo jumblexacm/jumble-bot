@@ -65,7 +65,7 @@ https://discord.com/developers/docs/intro
 
 4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot
 
-5. Consider creating another Discord app/bot, student org server, dev server, and MongoDB database as your dev environment.
+5. Consider creating another Discord app/bot, student org server, dev server, MongoDB database, and Algolia app as your dev environment.
 
 Notes about community servers:
 - For a message to appear in the dev server, you must post in the announcements channel *and* click "Publish."
@@ -211,7 +211,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 
 1. Post and publish a message in your test community server
 
-2. See the new document in MongoDB :)
+2. See the new document in MongoDB and record in Algolia :)
 
 3. View your Heroku logs
     - In your terminal, run:
@@ -232,10 +232,10 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 4. Edit to "[Original Message Deleted]"
 
 Expected result:
-- After step 1, MongoDB has the original message content
-- After step 2, MongoDB has the new message content
-- After step 3, MongoDB has the new new message content
-- After step 4, the message isn't in MongoDB
+- After step 1, MongoDB and Algolia have the original message content
+- After step 2, MongoDB and Algolia have the new message content
+- After step 3, MongoDB and Algolia have the new new message content
+- After step 4, the message isn't in MongoDB and Algolia
 
 #### Send and edit attachments (in a single session)
 
@@ -243,20 +243,20 @@ Expected result:
 2. Remove the attachment
 
 Expected result:
-- Before and after editing, MongoDB has the attachment
+- Before and after editing, MongoDB and Algolia have the attachment
 - The edit function doesn't trigger at all and the bot doesn't crash
 - However, maybe someday it'll work, and we don't want the bot crashing :)
 
 #### Send in one session and edit in another
 
 Expected result:
-- Before editing, MongoDB has the original message content
-- After editing, MongoDB has the new message content
+- Before editing, MongoDB and Algolia the original message content
+- After editing, MongoDB and Algolia the new message content
 
 #### Send when bot is offline and edit when online
 
 Expected result:
-- Before and after editing, the message isn't in MongoDB
+- Before and after editing, the message isn't in MongoDB and Algolia
 - However, the edit function triggers and doesn't crash
 
 #### Edit non-announcement messages
@@ -266,7 +266,7 @@ Expected result:
 2. Send and edit a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
 
 Expected result:
-- Before and after editing, none are in MongoDB
+- Before and after editing, none are in MongoDB and Algolia
 - However, the edit function triggers for each and doesn't crash
 
 
@@ -276,15 +276,15 @@ Expected result:
 
 1. "will delete": Delete from test community server
 
-2. "will fake delete": Edit in test community server to say "[Original Message Deleted]"
+2. "will fake delete": Edit in test community server to say "[Original Message Deleted]" (This just ensures that if deleting in the test community server doesn't work, it's because Discord has changed the way community server announcements channel following works.)
 
 3. "will manually delete": Delete manually in dev server
 
-The suggested message text here is to give you less to think about as you test and to help identify the entries in MongoDB :)
+The suggested message text here is to give you less to think about as you test and to help identify the entries in MongoDB and Algolia :)
 
 Expected result:
-- Before deletion, all three are in MongoDB
-- After deletion, none are in MongoDB
+- Before deletion, all three are in MongoDB and Algolia
+- After deletion, none are in MongoDB and Algolia
 
 #### Send in one session and delete in another
 
@@ -293,8 +293,8 @@ Expected result:
 3. "will manually delete next time"
 
 Expected result:
-- Before deletion, all three are in MongoDB
-- After deletion, none are in MongoDB
+- Before deletion, all three are in MongoDB and Algolia
+- After deletion, none are in MongoDB and Algolia
 
 #### Send when bot is offline and delete when online
 
@@ -303,8 +303,16 @@ Expected result:
 3. "will manually delete on start"
 
 Expected result:
-- Before and after deletion, none are in MongoDB
+- Before and after deletion, none are in MongoDB and Algolia
 - However, a delete function triggers for each and doesn't crash
+
+#### Delete deleted message
+
+1. Delete one of the messages from above that is now "[Original Message Deleted]"
+
+Expected result:
+- Before and after deletion, none are in MongoDB and Algolia
+- A delete function triggers, says the message wasn't found in MongoDB, and doesn't crash / raise any Python errors
 
 #### Delete non-announcement messages
 
@@ -317,7 +325,7 @@ Expected result:
 4. Send and delete a message in a different dev server channel. Again, do this in a single `discord.Client()` session.
 
 Expected result:
-- Before and after deletion, the message isn't in MongoDB
+- Before and after deletion, the message isn't in MongoDB and Algolia
 - However, a delete function triggers and doesn't crash
 
 
