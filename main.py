@@ -54,6 +54,8 @@ def get_org_data(post_data, most_recent_post_date):
         'org_id': org_id,
         'org_name': post_data['message_author'],
         'org_avatar_url': post_data['author_avatar_url'],
+        'org_description': "",
+        'org_links': [],
         'recency': most_recent_post_date
     }
     return (org_id, org_data)
