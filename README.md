@@ -10,6 +10,7 @@
 - MongoDB Atlas database
 
 - Heroku account and Heroku CLI
+    - https://devcenter.heroku.com/articles/heroku-cli
 
 - Python 3 (with `pip`)
 
@@ -44,7 +45,6 @@ https://discord.com/developers/docs/intro
     - Choose [permissions](https://discord.com/developers/docs/topics/oauth2#oauth2):
         - Under **"Scopes"**, check `bot`
         - Under **"Bot Permissions"**, check `Read Messages/View Channels`
-    - As your redirect URL, choose your redirect URI from earlier
     - Save the generated URL, because it disappears if you navigate away from the page
 
 5. Activate the bot
@@ -63,7 +63,7 @@ https://discord.com/developers/docs/intro
 
 4. Next to the new channel name, click **"Follow"** and choose your dev server where you installed the bot
 
-5. Consider creating another Discord app/bot, student org server, and dev server as your dev environment.
+5. Consider creating another Discord app/bot, student org server, dev server, and MongoDB database as your dev environment.
 
 Notes about community servers:
 - For a message to appear in the dev server, you must post in the announcements channel *and* click "Publish."
@@ -87,6 +87,10 @@ Notes about community servers:
         - Next to Jumble, click **[Connect]**
         - Click **[Connect Your Application]**
         - Copy the generated MongoDB URI, replace `<password>` with the password for the specified user, and save it somewhere secure
+    - Find the MongoDB database name
+        - In MongoDB Atlas, click **"Database"**
+        - Next to Jumble, click **[Browse Collections]**
+        - Under **"Create Database"** and **"Search Namespaces"**, find the database name and save it somewhere
     - Generate the Discord bot token
         - Open your Discord app in the Discord Developer Portal
         - Menu section: **"Bot"**
@@ -105,9 +109,12 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
         - KEY: `MONGODB_URI`
         - VALUE: *[Input the MongoDB URI]*
     - Add the second config var:
+        - KEY: `MONGODB_DB`
+        - VALUE: *[Input the MongoDB database name]*
+    - Add the third config var:
         - KEY: `DISCORD_TOKEN`
         - VALUE: *[Input the Discord bot token]*
-    - Add the third config var:
+    - Add the fourth config var:
         - KEY: `BOT_CHANNEL_ID`
         - VALUE: *[Input the Discord channel ID]*
 
@@ -135,13 +142,13 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
 ## STEP 4: Set up your Heroku CLI and local environment
 
 1. Store secrets in `.env`
-    - In your terminal, run:
+    - In your terminal, clone this repo and `cd` into its root directory
+    
+    - Set your local environment variables to your dev environment secrets OR run:
           
           heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
+          heroku config:get MONGODB_DB -s -a $HEROKU_APP_NAME >> .env
           heroku config:get BOT_CHANNEL_ID -s -a $HEROKU_APP_NAME >> .env
-    
-    - Then set `DISCORD_TOKEN` to your dev environment Discord bot's token OR run:
-          
           heroku config:get DISCORD_TOKEN -s -a $HEROKU_APP_NAME >> .env
 
 2. Install dependencies
