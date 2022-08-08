@@ -308,6 +308,41 @@ Expected result:
 
 
 
+## Manually add post to MongoDB
+
+Please note: The "Discord message" is the one in the dev server, not the original one in the student org community server. To manually add a post to MongoDB, you do not need to still be in the server.
+
+1. Duplicate a post's MongoDB document
+    - This ensures the new MongoDB document has the correct field names
+    - Preferably choose a post by the same org
+        - Otherwise, [@kirmar](https://github.com/kirmar) doesn't know how to get the URL of the org's avatar / profile picture
+    - If the post is by a different org, update the org fields
+        - Copy the Discord message's webhook ID into `org_id`
+            - Right-click the org's name
+            - **[Copy ID]**
+        - Copy the Discord message's author name (just the server name without the channel name) into `message_author`
+        - Set `author_avatar_url`: https://cdn.discordapp.com/embed/avatars/0.png
+
+2. Update `message_text`
+    - Copy the Discord message's text
+    - Add any formatting (bold, underlines, italicization, etc.)
+
+3. Update `attachment_urls`
+    - Click the attachment
+    - Right-click the image
+    - **[Copy image address]** or similar
+    - Change "media.discordapp.net" to "cdn.discordapp.net"
+    - Paste as an element in the `attachment_urls` array
+
+4. Add the post to Algolia
+    - In MongoDB, **[Copy Document]**
+    - In the Algolia `posts` index, **[Add records]** then **[Add manually]**
+    - Set `_id` directly to the string instead of a JSON
+    - Set `message_id` directly to the number (no quotes) instead of a JSON
+    - Set `objectID` to the same string as MongoDB's `_id`
+
+
+
 ## Repo conventions
 
 Branch naming convention
