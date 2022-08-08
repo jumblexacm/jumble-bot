@@ -49,8 +49,8 @@ https://discord.com/developers/docs/intro
 
 5. Activate the bot
     - Use the generated URL to invite the bot to your dev server
-    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to. (This is also prevented by `BOT_CHANNEL_ID` in `main.py`, but just in case.)
-    - Under the channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
+    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to. (This is also prevented by `BOT_CHANNEL_IDS` in `main.py`, but just in case.)
+    - Under each channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
 
 
 ## STEP 2: Create a test community server
@@ -95,10 +95,10 @@ Notes about community servers:
         - Open your Discord app in the Discord Developer Portal
         - Menu section: **"Bot"**
         - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere secure
-    - Find the Discord channel ID for the bot to watch
+    - Find the Discord channel IDs for the bot to watch
         - Open your dev server
-        - Open the channel you want the bot to watch
-        - In the URL, save the second number
+        - Open each channel you want the bot to watch
+        - From each URL, save the second number (the channel ID) with commas separating the channel IDs (no space, just ",")
 
 Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using the Heroku Dashboard prevents secrets from being stored in your terminal history.
 
@@ -115,8 +115,8 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
         - KEY: `DISCORD_TOKEN`
         - VALUE: *[Input the Discord bot token]*
     - Add the fourth config var:
-        - KEY: `BOT_CHANNEL_ID`
-        - VALUE: *[Input the Discord channel ID]*
+        - KEY: `BOT_CHANNEL_IDS`
+        - VALUE: *[Input the Discord channel IDs]*
 
 5. Let Heroku access MongoDB
     - In MongoDB Atlas, click **"Network Access"**
@@ -148,7 +148,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
           
           heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
           heroku config:get MONGODB_DB -s -a $HEROKU_APP_NAME >> .env
-          heroku config:get BOT_CHANNEL_ID -s -a $HEROKU_APP_NAME >> .env
+          heroku config:get BOT_CHANNEL_IDS -s -a $HEROKU_APP_NAME >> .env
           heroku config:get DISCORD_TOKEN -s -a $HEROKU_APP_NAME >> .env
 
 2. Install dependencies
