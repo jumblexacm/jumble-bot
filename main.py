@@ -8,27 +8,15 @@ import requests
 from algoliasearch.search_client import SearchClient
 
 try:
-    # Import config vars on Heroku
-    DISCORD_TOKEN = process.env.DISCORD_TOKEN
-    MONGODB_URI = process.env.MONGODB_URI
-    MONGODB_DB = process.env.MONGODB_DB
-    BOT_CHANNEL_ID = process.env.BOT_CHANNEL_ID
-    ALGOLIA_ID = process.env.ALGOLIA_ID
-    ALGOLIA_ADMIN_KEY = process.env.ALGOLIA_ADMIN_KEY
-except NameError as e:
-    if str(e) != "name 'process' is not defined":
-        raise
-    try:
-        # Import environment vars from .env on local machine
-        DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
-        MONGODB_URI = os.environ['MONGODB_URI']
-        MONGODB_DB = os.environ['MONGODB_DB']
-        BOT_CHANNEL_ID = os.environ['BOT_CHANNEL_ID']
-        ALGOLIA_ID = os.environ['ALGOLIA_ID']
-        ALGOLIA_ADMIN_KEY = os.environ['ALGOLIA_ADMIN_KEY']
-    except KeyError:
-        print(f"os.environ keys: {sorted(list(os.environ.keys()))}")
-        raise
+    DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
+    MONGODB_URI = os.environ['MONGODB_URI']
+    MONGODB_DB = os.environ['MONGODB_DB']
+    BOT_CHANNEL_ID = os.environ['BOT_CHANNEL_ID']
+    ALGOLIA_ID = os.environ['ALGOLIA_ID']
+    ALGOLIA_ADMIN_KEY = os.environ['ALGOLIA_ADMIN_KEY']
+except KeyError:
+    print(f"os.environ keys: {sorted(list(os.environ.keys()))}")
+    raise
 
 discord_client = discord.Client()
 
@@ -63,6 +51,9 @@ def get_org_data(post_data, most_recent_post_date):
         'org_id': org_id,
         'org_name': post_data['message_author'],
         'org_avatar_url': post_data['author_avatar_url'],
+        'org_description': "",
+        'org_links': [],
+        'org_posts': {},
         'recency': most_recent_post_date
     }
     return (org_id, org_data)
