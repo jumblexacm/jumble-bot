@@ -338,7 +338,7 @@ Please note: The "Discord message" is the one in the dev server, not the origina
     - In MongoDB, **[Copy Document]**
     - In the Algolia `posts` index, **[Add records]** then **[Add manually]**
     - Set `_id` directly to the string instead of a JSON
-    - Set `message_id` directly to the number (no quotes) instead of a JSON
+    - Set `message_id` directly to string
     - Set `objectID` to the same string as MongoDB's `_id`
 
 

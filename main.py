@@ -30,7 +30,8 @@ def get_post_data(message):
             # channel, not a community server as a whole. If possible,
             # access the Channel Follower Webhook's source guild.
             # More here: https://discord.com/channels/992524047084687461/992524799060496576/997615364462624779
-        'message_id': message.id,
+        'message_id': str(message.id),
+            # Without `str()`, `message_id` is too large for a JavaScript int
         'message_author': message.author.display_name.rsplit(' #', 1)[0],
         'author_avatar_url': str(message.author.avatar_url),
         'date': message.created_at.strftime("%B %d, %Y"),
@@ -106,13 +107,14 @@ async def on_message(message):
 # previous Heroku "session."
 @discord_client.event
 async def on_raw_message_edit(payload):
-    message_id = payload.message_id
+    int_message_id = payload.message_id
+    message_id = str(int_message_id)
     
     # Do NOT use `payload.cached_message`; it's the unedited message
     # and also is None if the message was sent before this
     # `discord.Client()`'s lifetime.
     channel = discord_client.get_channel(payload.channel_id)
-    message = await channel.fetch_message(message_id)
+    message = await channel.fetch_message(int_message_id)
     
     post_data = get_post_data(message)
     
@@ -135,7 +137,7 @@ async def on_raw_message_edit(payload):
 
 @discord_client.event
 async def on_raw_message_delete(payload):
-    message_id = payload.message_id
+    message_id = str(payload.message_id)
     
     # Do NOT use `channel.fetch_message()`; it raises a
     # "discord.errors.NotFound: ... Unknown Message"
