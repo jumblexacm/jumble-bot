@@ -51,8 +51,8 @@ https://discord.com/developers/docs/intro
 
 5. Activate the bot
     - Use the generated URL to invite the bot to your dev server
-    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to. (This is also prevented by `BOT_CHANNEL_ID` in `main.py`, but just in case.)
-    - Under the channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
+    - In your dev server settings > **"Roles"** > your bot > **"Permissions"**, turn off `View Channels`. Otherwise, the bot may add messages to MongoDB that you don't want it to. (This is also prevented by `BOT_CHANNEL_IDS` in `main.py`, but just in case.)
+    - Under each channel you want the bot to watch > **"Edit Channel"** (gear icon) > **"Permissions"**, turn on `View Channel`
 
 
 ## STEP 2: Create a test community server
@@ -97,10 +97,10 @@ Notes about community servers:
         - Open your Discord app in the Discord Developer Portal
         - Menu section: **"Bot"**
         - Under **"Build-A-Bot"**, click `Reset Token` and save it somewhere secure
-    - Find the Discord channel ID for the bot to watch
+    - Find the Discord channel IDs for the bot to watch
         - Open your dev server
-        - Open the channel you want the bot to watch
-        - In the URL, save the second number
+        - Open each channel you want the bot to watch
+        - From each URL, save the second number (the channel ID) with commas separating the channel IDs (no space, just ",")
     - Find the Algolia app's API keys
         - Open your Algolia app's dashboard
         - Below the welcome message, click **"API Keys"**
@@ -121,8 +121,8 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
         - KEY: `DISCORD_TOKEN`
         - VALUE: *[Input the Discord bot token]*
     - Add the fourth config var:
-        - KEY: `BOT_CHANNEL_ID`
-        - VALUE: *[Input the Discord channel ID]*
+        - KEY: `BOT_CHANNEL_IDS`
+        - VALUE: *[Input the Discord channel IDs]*
     - Add the fifth config var:
         - KEY: ALGOLIA_ID
         - VALUE: *[Input the Algolia app's application ID]*
@@ -160,7 +160,7 @@ Note: When storing secrets, please use the Heroku Dashboard, not the CLI. Using 
           
           heroku config:get MONGODB_URI -s -a $HEROKU_APP_NAME >> .env
           heroku config:get MONGODB_DB -s -a $HEROKU_APP_NAME >> .env
-          heroku config:get BOT_CHANNEL_ID -s -a $HEROKU_APP_NAME >> .env
+          heroku config:get BOT_CHANNEL_IDS -s -a $HEROKU_APP_NAME >> .env
           heroku config:get DISCORD_TOKEN -s -a $HEROKU_APP_NAME >> .env
           heroku config:get ALGOLIA_ID -s -a $HEROKU_APP_NAME >> .env
           heroku config:get ALGOLIA_ADMIN_KEY -s -a $HEROKU_APP_NAME >> .env
@@ -327,6 +327,41 @@ Expected result:
 Expected result:
 - Before and after deletion, the message isn't in MongoDB and Algolia
 - However, a delete function triggers and doesn't crash
+
+
+
+## Manually add post to MongoDB
+
+Please note: The "Discord message" is the one in the dev server, not the original one in the student org community server. To manually add a post to MongoDB, you do not need to still be in the server.
+
+1. Duplicate a post's MongoDB document
+    - This ensures the new MongoDB document has the correct field names
+    - Preferably choose a post by the same org
+        - Otherwise, [@kirmar](https://github.com/kirmar) doesn't know how to get the URL of the org's avatar / profile picture
+    - If the post is by a different org, update the org fields
+        - Copy the Discord message's webhook ID into `org_id`
+            - Right-click the org's name
+            - **[Copy ID]**
+        - Copy the Discord message's author name (just the server name without the channel name) into `message_author`
+        - Set `author_avatar_url`: https://cdn.discordapp.com/embed/avatars/0.png
+
+2. Update `message_text`
+    - Copy the Discord message's text
+    - Add any formatting (bold, underlines, italicization, etc.)
+
+3. Update `attachment_urls`
+    - Click the attachment
+    - Right-click the image
+    - **[Copy image address]** or similar
+    - Change "media.discordapp.net" to "cdn.discordapp.net"
+    - Paste as an element in the `attachment_urls` array
+
+4. Add the post to Algolia
+    - In MongoDB, **[Copy Document]**
+    - In the Algolia `posts` index, **[Add records]** then **[Add manually]**
+    - Set `_id` directly to the string instead of a JSON
+    - Set `message_id` directly to the number (no quotes) instead of a JSON
+    - Set `objectID` to the same string as MongoDB's `_id`
 
 
 

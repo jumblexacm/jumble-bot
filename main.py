@@ -11,7 +11,7 @@ try:
     DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
     MONGODB_URI = os.environ['MONGODB_URI']
     MONGODB_DB = os.environ['MONGODB_DB']
-    BOT_CHANNEL_ID = os.environ['BOT_CHANNEL_ID']
+    BOT_CHANNEL_IDS = os.environ['BOT_CHANNEL_IDS']
     ALGOLIA_ID = os.environ['ALGOLIA_ID']
     ALGOLIA_ADMIN_KEY = os.environ['ALGOLIA_ADMIN_KEY']
 except KeyError:
@@ -59,8 +59,8 @@ def get_org_data(post_data, most_recent_post_date):
     return (org_id, org_data)
 
 def in_correct_channel(message):
-    """Verify message is from bot's assigned "to-watch" channel."""
-    if message.channel.id != int(BOT_CHANNEL_ID):
+    """Verify message is from bot's assigned "to-watch" channels."""
+    if str(message.channel.id) not in BOT_CHANNEL_IDS.split(","):
         print("Message from a channel that bot isn't assigned to watch.")
         return False
     return True
