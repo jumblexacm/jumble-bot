@@ -4,22 +4,28 @@ import sys
 sys.path.append('lib/')
 import discord
 from pymongo import MongoClient
+from algoliasearch.search_client import SearchClient
 
 try:
     DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
     MONGODB_URI = os.environ['MONGODB_URI']
     MONGODB_DB = os.environ['MONGODB_DB']
     BOT_CHANNEL_IDS = os.environ['BOT_CHANNEL_IDS']
+    ALGOLIA_ID = os.environ['ALGOLIA_ID']
+    ALGOLIA_ADMIN_KEY = os.environ['ALGOLIA_ADMIN_KEY']
 except KeyError:
     print(f"os.environ keys: {sorted(list(os.environ.keys()))}")
     raise
 
 discord_client = discord.Client()
-mongo_client = MongoClient(MONGODB_URI)
 
+mongo_client = MongoClient(MONGODB_URI)
 db = mongo_client[MONGODB_DB]
 posts_collection = db.Posts
 orgs_collection = db.Orgs
+
+algolia_client = SearchClient.create(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
+algolia_index = algolia_client.init_index('posts')
 
 def get_post_data(message):
     attachment_urls = [attachment.url for attachment in message.attachments]
@@ -93,7 +99,17 @@ async def on_message(message):
     if not from_followed_channel(
         message, post_data, processing=f"forwarding (to `{MONGODB_DB}`)"):
         return
+    
+    # Update MongoDB
     posts_collection.insert_one(post_data)
+    
+    # Update Algolia
+    post_data['objectID'] = post_data['_id']
+    algolia_index.save_object(
+        post_data, # Note: MongoDB seems to add its `_id` to `post_data`
+        { 'autoGenerateObjectIDIfNotExist': True })
+    
+    # Update orgs records
     most_recent_post_date = message.created_at
     org_id, org_data = get_org_data(post_data, most_recent_post_date)
     updated_org = orgs_collection.find_one_and_update(
@@ -126,14 +142,28 @@ async def on_raw_message_edit(payload):
         if not from_followed_channel(
             message, post_data, processing="deleting"):
             return
+        
+        # Update Algolia (by getting MongoDB `_id` before it's deleted)
+        post_data = posts_collection.find_one({ 'message_id': message_id })
+        algolia_object_id = post_data['_id']
+        algolia_index.delete_object(algolia_object_id)
+        
+        # Update MongoDB
         posts_collection.delete_one({ 'message_id': message_id })
     else:
         # Really, truly an edit
         if not from_followed_channel(message, post_data, processing="editing"):
             return
+        
+        # Update MongoDB
         posts_collection.update_one(
             { 'message_id': message_id },
             { '$set': post_data })
+        
+        # Update Algolia
+        post_data = posts_collection.find_one({ 'message_id': message_id })
+        post_data['objectID'] = post_data['_id']
+        algolia_index.save_object(post_data)
 
 @discord_client.event
 async def on_raw_message_delete(payload):
@@ -149,17 +179,32 @@ async def on_raw_message_delete(payload):
         if not from_followed_channel(
             message, post_data, processing="deleting"):
             return
+        # Get MongoDB `_id` before it's deleted
+        post_data = posts_collection.find_one({ 'message_id': message_id })
     else:
         # If message was sent before this `discord_client`'s lifetime,
         # then `message` is None. Just spend some extra effort trying
         # to delete a possibly-nonexistent document from MongoDB.
         # Source: https://stackoverflow.com/a/64227013
+        post_data = posts_collection.find_one({ 'message_id': message_id })
         print()
-        print(
-            "Message may or may not be from a followed announcements channel."
-            "\n   Bot is attempting to delete message."
-            f"   message_id: {message_id}")
+        if post_data:
+            print(
+                "Message found in MongoDB."
+                "\n   Bot is deleting message."
+                f"\n   post_data: {post_data}")
+        else:
+            print(
+                "Message not found in MongoDB."
+                "\n   Bot is not deleting message."
+                f"\n   message_id: {message_id}")
+            return
     
+    # Update Algolia
+    algolia_object_id = post_data['_id']
+    algolia_index.delete_object(post_data['_id'])
+    
+    # Update MongoDB
     posts_collection.delete_one({ 'message_id': message_id })
 
 discord_client.run(DISCORD_TOKEN)
