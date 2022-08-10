@@ -4,7 +4,6 @@ import sys
 sys.path.append('lib/')
 import discord
 from pymongo import MongoClient
-import requests
 from algoliasearch.search_client import SearchClient
 
 try:
