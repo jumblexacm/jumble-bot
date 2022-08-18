@@ -330,7 +330,7 @@ Expected result:
 
 
 
-## Manually add post to MongoDB
+## Manually add post to MongoDB and Algolia
 
 Please note: The "Discord message" is the one in the dev server, not the original one in the student org community server. To manually add a post to MongoDB, you do not need to still be in the server.
 
