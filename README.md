@@ -337,7 +337,7 @@ Please note: The "Discord message" is the one in the dev server, not the origina
 1. Duplicate a post's MongoDB document
     - This ensures the new MongoDB document has the correct field names
     - Preferably choose a post by the same org
-        - Otherwise, [@kirmar](https://github.com/kirmar) doesn't know how to get the URL of the org's avatar / profile picture
+        - Otherwise, you'll need to use a default Discord avatar because [@kirmar](https://github.com/kirmar) doesn't know how to get the URL of an org's avatar / profile picture
     - If the post is by a different org, update the org fields
         - Copy the Discord message's webhook ID into `org_id`
             - Right-click the org's name
@@ -345,24 +345,35 @@ Please note: The "Discord message" is the one in the dev server, not the origina
         - Copy the Discord message's author name (just the server name without the channel name) into `message_author`
         - Set `author_avatar_url`: https://cdn.discordapp.com/embed/avatars/0.png
 
-2. Update `message_text`
+2. Update `message_id`
+    - Right-click the Discord message
+    - **[Copy ID]**
+
+3. Update `date`
+    - Use the same formatting style as the other MongoDB documents' dates
+
+4. Update `message_text`
     - Copy the Discord message's text
     - Add any formatting (bold, underlines, italicization, etc.)
 
-3. Update `attachment_urls`
+5. Update `attachment_urls`
     - Click the attachment
     - Right-click the image
     - **[Copy image address]** or similar
-    - Change "media.discordapp.net" to "cdn.discordapp.net"
+    - Change "media.discordapp.net" to "cdn.discordapp.com"
     - Paste as an element in the `attachment_urls` array
 
-4. Add the post to Algolia
+6. Add the post to Algolia
     - In MongoDB, **[Copy Document]**
     - In the Algolia `posts` index, **[Add records]** then **[Add manually]**
     - Set `_id` directly to the string instead of a JSON
     - Add the `_id` key-value pair at the end of in the JSON (for consistency with the bot-added Algolia records)
     - For the `_id` key-value pair at the beginning of the JSON, change `_id` to `objectID` (for Algolia's identifier)
 
+7. Check
+    - Confirm the post is formatted properly on the site
+    - Confirm the post is in the correct place chronologically (based on the `_id` generated at the time you added this new MongoDB document)
+    - Confirm the post can be searched
 
 
 ## Repo conventions
